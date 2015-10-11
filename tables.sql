@@ -82,6 +82,7 @@ create table appearance_requests (
   band_id integer references bands(id),
   start_time date,
   end_time date,
+  description varchar2(1000),
   location_id references locations(id),
   accepted integer CHECK (accepted = 0 or accepted = 1),
   primary key (id, band_id)
@@ -95,7 +96,7 @@ create table appointments (
   start_time date,
   end_time date,
   name varchar2(50),
-  description varchar2(50),
+  description varchar2(1000),
   primary key (id, band_id)
 );
 
