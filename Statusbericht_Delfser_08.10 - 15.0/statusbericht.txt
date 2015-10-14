@@ -1,0 +1,3 @@
+WPF/C# Projekt wurde angelegt.
+Die erste Maske bei der man sich anmelden beziehungsweise registrieren kann wurde erstellt.
+RadioButtonGroup wurde implementiert.
