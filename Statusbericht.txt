@@ -1,1 +1,0 @@
-ERD gezeichnet + Tabellen in SQL erstellt. (Stefan Egger + Michael Delfser)
