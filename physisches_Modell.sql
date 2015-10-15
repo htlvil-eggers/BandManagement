@@ -1,61 +1,72 @@
-drop table appearences;
-drop table rehearsals;
-drop table appointment_attendances;
-drop table appointments;
-drop table appearance_requests;
-drop table rehearsal_requests;
-drop table available_times;
-drop table bandmembers;
-drop table bands;
-drop table instrument_skills;
-drop table instruments;
-drop table musicians;
-drop table streets;
-drop table locations;
+drop table appearances cascade constraints;
+drop table rehearsals cascade constraints;
+drop table appointment_attendances cascade constraints;
+drop table appointments cascade constraints;
+drop table appearance_requests cascade constraints;
+drop table rehearsal_requests cascade constraints;
+drop table available_times cascade constraints;
+drop table bandmembers cascade constraints;
+drop table bands cascade constraints;
+drop table instrument_skills cascade constraints;
+drop table instruments cascade constraints;
+drop table musicians cascade constraints;
+drop table streets cascade constraints;
+drop table locations cascade constraints;
 
 
 create table locations (
-  id integer primary key,
+  id integer,
   name varchar2(50),
-  shape sdo_geometry
+  shape sdo_geometry,
+  constraint pk_Location primary key (id)
 );
 
 create table streets (
-  id integer primary key,
+  id integer,
   name varchar2(50),
-  shape sdo_geometry
+  shape sdo_geometry,
+  constraint pk_Street primary key (id)
 );
 
 create table musicians (
-  id integer primary key,
+  id integer,
   name varchar2(50),
   birthdate date,
-  habitation_id integer references locations(id)
+  habitation_id integer,
+  constraint pk_Musician primary key (id),
+  constraint fk_Musicians_Locations foreign key (habitation_id) references locations(id)
 );
 
 create table instruments (
-  id integer primary key,
-  name varchar2(50)
+  id integer,
+  name varchar2(50),
+  constraint pk_Instrument primary key (id)
 );
 
 create table instrument_skills (
-  musician_id integer references musicians(id),
-  instrument_id integer references instruments(id),
-  primary key (musician_id, instrument_id)
+  musician_id integer,
+  instrument_id integer,
+  constraint pk_Instrument_skill primary key (musician_id, instrument_id),
+  constraint fk_Instrument_skills_Musicians foreign key (musician_id) references musicians(id),
+  constraint fk_Instrument_skills_Instrumen foreign key (instrument_id) references instruments(id)
 );
 
 create table bands (
-  id integer primary key,
+  id integer,
   name varchar2(50),
-  leader_id integer references musicians(id),
-  costs_per_hour integer
+  leader_id integer,
+  costs_per_hour integer,
+  constraint pk_Band primary key (id),
+  constraint fk_Bands_Musicians foreign key (leader_id) references musicians(id)
 );
 
 create table bandmembers (
-  band_id integer references bands(id),
-  musician_id integer references musicians(id),
+  band_id integer,
+  musician_id integer,
   joined date,
-  primary key (band_id, musician_id)
+  constraint pk_Bandmember primary key (band_id, musician_id),
+  constraint fk_Bandmembers_Bands foreign key (band_id) references bands(id),
+  constraint fk_Bandmembers_Musicians foreign key (musician_id) references musicians(id)
 );
 
 create table available_times (
@@ -64,61 +75,67 @@ create table available_times (
   musician_id integer,
   start_time date,
   end_time date,
-  foreign key (band_id, musician_id) references bandmembers (band_id, musician_id),
-  primary key (id, band_id, musician_id)
+  constraint pk_Available_time primary key (id, band_id, musician_id),
+  constraint fk_Available_times_Bandmembers foreign key (band_id, musician_id) references bandmembers (band_id, musician_id)
 );
   
 create table rehearsal_requests (
   id integer,
-  band_id integer references bands(id),
+  band_id integer,
   start_time date,
   end_time date,
   duration float,
-  primary key (id, band_id)
+  constraint pk_Rehearsal_request primary key (id, band_id),
+  constraint fk_Rehearsal_requests_Bandmemb foreign key (band_id) references bands (id)
 );
 
 create table appearance_requests (
   id integer,
-  band_id integer references bands(id),
+  band_id integer,
   start_time date,
   end_time date,
-  description varchar2(1000),
-  location_id references locations(id),
-  accepted integer CHECK (accepted = 0 or accepted = 1),
-  primary key (id, band_id)
+  location_id integer,
+  accepted integer,
+  constraint pk_Appearance_requests primary key (id, band_id),
+  constraint fk_Appearance_requests_Bands foreign key (band_id) references bands (id),
+  constraint fk_Appearance_requests_Locatio foreign key (location_id) references locations (id),
+  constraint ck_Appearance_requests_Accepte check (accepted = 0 or accepted = 1)
 );
 
 create table appointments (
   id integer,
-  band_id integer references bands(id),
-  location_id integer references locations(id),
-  grounded integer CHECK (grounded = 0 or grounded = 1),
+  band_id integer,
+  location_id integer,
+  grounded integer,
   start_time date,
   end_time date,
   name varchar2(50),
-  description varchar2(1000),
-  primary key (id, band_id)
+  description varchar2(50),
+  constraint pk_Appointment primary key (id, band_id),
+  constraint fk_Appointments_Bands foreign key (band_id) references bands (id),
+  constraint fk_Appointments_Locations foreign key (location_id) references locations (id),
+  constraint ck_Appearance_requests_Accepte check (grounded = 0 or grounded = 1)
 );
 
 create table appointment_attendances (
   appointment_id integer,
   band_id integer,
   musician_id integer,
-  foreign key (appointment_id, band_id) references appointments (id, band_id),
-  foreign key (band_id, musician_id) references bandmembers (band_id, musician_id),
-  primary key (appointment_id, musician_id, band_id)
+  constraint pk_Appointment_attendance primary key (appointment_id, musician_id, band_id),
+  constraint fk_Appointment_attendances_App foreign key (appointment_id, band_id) references appointments (id, band_id),
+  constraint fk_Appointment_attendances_Ban foreign key (band_id, musician_id) references bandmembers (band_id, musician_id)
 );
 
 create table rehearsals (
   appointment_id integer,
   band_id integer,
-  foreign key (appointment_id, band_id) references appointments (id, band_id),
-  primary key (appointment_id, band_id)
+  constraint pk_Rehearsal primary key (appointment_id, band_id),
+  constraint fk_Rehearsals_Appointments foreign key (appointment_id, band_id) references appointments (id, band_id)
 );
 
 create table appearances (
   appointment_id integer,
   band_id integer,
-  foreign key (appointment_id, band_id) references appointments (id, band_id),
-  primary key (appointment_id, band_id)
+  constraint pk_Appearance primary key (appointment_id, band_id),
+  constraint fk_Appearances_Appointments foreign key (appointment_id, band_id) references appointments (id, band_id)
 );
