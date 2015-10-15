@@ -30,7 +30,10 @@ create table streets (
 
 create table musicians (
   id integer,
-  name varchar2(50),
+  username varchar2(50),
+  password varchar2(50),
+  first_name varchar2(50),
+  last_name varchar2(50),
   birthdate date,
   habitation_id integer,
   constraint pk_Musician primary key (id),
@@ -114,7 +117,7 @@ create table appointments (
   constraint pk_Appointment primary key (id, band_id),
   constraint fk_Appointments_Bands foreign key (band_id) references bands (id),
   constraint fk_Appointments_Locations foreign key (location_id) references locations (id),
-  constraint ck_Appearance_requests_Accepte check (grounded = 0 or grounded = 1)
+  constraint ck_Appointments_requests_Accep check (grounded = 0 or grounded = 1)
 );
 
 create table appointment_attendances (
