@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace Bandmanagement.View
 {
-    /// <summary>
+    /// <summary> 
     /// Interaktionslogik für BandmemberManagement.xaml
     /// </summary>
     public partial class BandmemberManagement : Window

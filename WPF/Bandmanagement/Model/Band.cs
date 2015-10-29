@@ -22,7 +22,7 @@ namespace Bandmanagement.Model
         {
 
         }
-
+         
         public Band (int id, String name, Musician leader)
         {
             this.Id = id;

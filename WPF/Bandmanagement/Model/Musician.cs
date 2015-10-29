@@ -47,7 +47,8 @@ namespace Bandmanagement.Model
         {
             Boolean dataCorrect = true;
 
-            if (this.Username.Length < 1 || this.Password.Length < 1 || this.FirstName.Length < 1 || this.LastName.Length < 1)
+            if (this.Username == null || this.Password == null || this.FirstName == null || this.LastName == null ||
+                this.Username.Length < 1 || this.Password.Length < 1 || this.FirstName.Length < 1 || this.LastName.Length < 1)
             {
                 dataCorrect = false;
             }
