@@ -7,8 +7,12 @@
         mc:Ignorable="d"
         Title="BandmemberManagement" Height="432.958" Width="592.923">
     <Grid>
-        <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="73" Margin="463,-26,-11.6,0" VerticalAlignment="Top" Width="135">
+        <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="81" Margin="376,-26,-11.6,0" VerticalAlignment="Top" Width="222">
             <Grid x:Name="grSignInInfo" Background="#FFEAF9FF">
+                <Label x:Name="lblSignedInUsername" Content="Username:" HorizontalAlignment="Left" Margin="5,25,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="lblSignedInBand" Content="Band:" HorizontalAlignment="Left" Margin="5,49,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="lblDisplaySignedInBand" Content="" HorizontalAlignment="Left" Margin="76,49,0,0" VerticalAlignment="Top" Width="132"/>
+                <Label x:Name="lblDisplaySignedInUsername" Content="" HorizontalAlignment="Left" Margin="76,25,0,0" VerticalAlignment="Top" Width="132"/>
             </Grid>
         </Border>
 

@@ -67,8 +67,8 @@ namespace Bandmanagement
 
 
                 OleDbCommand cmdSelectData = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdSelectData.CommandText = @"select b.id as bId, mus.id as musId, mus.first_name as musFirstName, mus.last_name as musLastName from Musicians mus join Bands b on mus.id = b.leader_id 
-                                         where b.name = ? and mus.username = ? and mus.password = ?";
+                cmdSelectData.CommandText = @"select b.id as bId, mus.id as musId, mus.first_name as musFirstName, mus.last_name as musLastName 
+                                              from Musicians mus join Bands b on mus.id = b.leader_id where b.name = ? and mus.username = ? and mus.password = ?";
                 cmdSelectData.Parameters.AddWithValue("bandname", insertedBand.Name);
                 cmdSelectData.Parameters.AddWithValue("username", insertedMusician.Username);
                 cmdSelectData.Parameters.AddWithValue("password", insertedMusician.Password);
@@ -165,7 +165,7 @@ namespace Bandmanagement
                     BandmemberManagement managementWindow = new BandmemberManagement(insertedBand);
                     managementWindow.Show();
                 }
-                catch (Exception _e)
+                catch (Exception)
                 {
                     transInsertBand.Rollback();
                     this.lblError.Content = "Username oder Bandname existieren bereits!";

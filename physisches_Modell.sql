@@ -61,7 +61,7 @@ create table bands (
   leader_id integer,
   costs_per_hour integer,
   constraint pk_Band primary key (id),
-  constraint fk_Bands_Musicians foreign key (leader_id) references bandmembers(id),
+  constraint fk_Bands_Musicians foreign key (leader_id) references musicians(id),
   constraint unique_Band_Name unique (name)
 );
 

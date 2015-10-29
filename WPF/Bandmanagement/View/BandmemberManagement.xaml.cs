@@ -20,11 +20,20 @@ namespace Bandmanagement.View
     /// </summary>
     public partial class BandmemberManagement : Window
     {
+        public Band currentBand;
+
         public BandmemberManagement(Band signedInBand)
         {
             InitializeComponent();
 
+            currentBand = signedInBand;
+            DisplaySignedInData();
+        }
 
+        private void DisplaySignedInData()
+        {
+            this.lblDisplaySignedInUsername.Content = this.currentBand.Leader.Username;
+            this.lblDisplaySignedInBand.Content = this.currentBand.Name;            
         }
     }
 }
