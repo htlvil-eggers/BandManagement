@@ -37,7 +37,8 @@ create table musicians (
   birthdate date,
   habitation_id integer,
   constraint pk_Musician primary key (id),
-  constraint fk_Musicians_Locations foreign key (habitation_id) references locations(id)
+  constraint fk_Musicians_Locations foreign key (habitation_id) references locations(id),
+  constraint unique_Musician_Username unique (username)
 );
 
 create table instruments (
@@ -60,7 +61,8 @@ create table bands (
   leader_id integer,
   costs_per_hour integer,
   constraint pk_Band primary key (id),
-  constraint fk_Bands_Musicians foreign key (leader_id) references musicians(id)
+  constraint fk_Bands_Musicians foreign key (leader_id) references musicians(id),
+  constraint unique_Band_Name unique (name)
 );
 
 create table bandmembers (

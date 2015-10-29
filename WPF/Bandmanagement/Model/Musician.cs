@@ -18,8 +18,41 @@ namespace Bandmanagement.Model
 
         public String LastName { get; set; }
 
-        public DateTime Birtdate { get; set; }
+        public DateTime? Birthdate { get; set; }
 
-        //public int HabitationId { get; set; }
+        public Location Habitation { get; set; }
+
+        public List<Instrument> Skills { get; set; }  //TODO: instead of table instrumentSkills; correct collection?
+
+
+        public Musician()
+        {
+            
+        }
+
+        public Musician (int id, String username, String password, String firstName, String lastName)
+        {
+            this.Id = id;
+            this.Username = username;
+            this.Password = password;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+
+            this.Birthdate = null;
+            this.Habitation = null;
+            this.Skills = null;
+        }
+
+        public Boolean IsDataCorrect()
+        {
+            Boolean dataCorrect = true;
+
+            if (this.Username.Length < 1 || this.Password.Length < 1 || this.FirstName.Length < 1 || this.LastName.Length < 1)
+            {
+                dataCorrect = false;
+            }
+
+            return dataCorrect;
+        }
     }
 }
