@@ -1,0 +1,8 @@
+Schiene 1: Egger
+Schiene 2: Delfser
+
+Schiene 1 (Java):
+Erstellung des Hauptfensters vom Java-Client. GUI vollständig erstellt (ohne Funktionalität dahinter). Bearbeiten der eigenen Profildaten vollständig implementiert (mit Datenbankanbindung).
+
+Schiene 2 (C#):
+WPF-Spatial-Client vollständig implementiert (mit Datenbankanbindung).
