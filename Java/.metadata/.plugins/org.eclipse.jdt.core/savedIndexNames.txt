@@ -1,0 +1,3 @@
+INDEX VERSION 1.127+/home/stefan/workspace/Band-Management/Java/.metadata/.plugins/org.eclipse.jdt.core
+2954197696.index
+553488167.index

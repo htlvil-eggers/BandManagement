@@ -1,0 +1,56 @@
+package pkgController;
+
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.Alert;
+
+import pkgModel.OracleDatabaseManager;
+
+public class LoginController {
+	private OracleDatabaseManager databaseManager;
+	private ResourceBundle resources;
+	
+	private void initialize() {
+		databaseManager = (OracleDatabaseManager) resources.getObject("databaseManager");
+	}
+	
+    @FXML
+    private Button btnClose;
+    @FXML
+    private TextField txtUsername;
+    @FXML
+    private Button btnLogin;
+    @FXML
+    private PasswordField pwdPassword;
+    @FXML
+    private TextField txtBand;
+    
+    @FXML
+    private void btnLogin_onAction() {
+    	String username = txtUsername.getText();
+    	String password = pwdPassword.getText();
+    	String bandname = txtBand.getText();
+    	
+    	try {
+			if (databaseManager.checkCredentials (username, password, bandname) == true) {
+				
+			}
+			else {
+				Alert messageWindow = new Alert (Alert.AlertType.ERROR, "Credentials are not correct!", null);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+
+    @FXML
+    private void btnClose_onAction() {
+
+    }
+}

@@ -1,0 +1,5 @@
+package pkgModel;
+
+public class EnumMusicianData {
+	PASSWORD, FIRST_NAME, LAST_NAME, BIRTH_DATE, HABITATION, INSTRUMENTS	
+}

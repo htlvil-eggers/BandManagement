@@ -2,7 +2,7 @@ Schiene 1: Egger
 Schiene 2: Delfser
 
 Schiene 1 (Java): 
-Login- und Registrierungsfenster (mit Datenbankanbindung) implementiert.
+Loginfenster (mit Datenbankanbindung) implementiert.
 
 Schiene 2 (C#):
 Login- und Registrierungsfenster (mit Datenbankanbindung) implementiert.

@@ -1,0 +1,87 @@
+package pkgController;
+
+import java.sql.Date;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.ResourceBundle;
+import java.util.Vector;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.collections.FXCollections;
+import pkgModel.OracleDatabaseManager;
+import pkgModel.EnumMusicianData;
+import pkgModel.Instrument;
+import pkgModel.Location;
+import pkgModel.Musician;
+
+public class MainController {
+	private OracleDatabaseManager databaseManager;
+	private String username;
+	
+	@FXML
+	private ResourceBundle resources;
+	
+	@FXML
+	private void initialize() {
+		databaseManager = (OracleDatabaseManager) resources.getObject ("databaseManager");
+		username = (String) resources.getObject("username");
+		
+		cboxHabitation.setItems (FXCollections.observableArrayList (databaseManager.getLocations()));
+		cboxInstruments.setItems (FXCollections.observableArrayList(databaseManager.getInstruments()));
+	}
+	
+    @FXML
+    private Button btnAccept;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private DatePicker dateBirthdate;
+    @FXML
+    private ComboBox<Location> cboxHabitation;
+    @FXML
+    private ListView<?> lstAppearances;
+    @FXML
+    private PasswordField pwdPassword;
+    @FXML
+    private TextArea txtareaDetail;
+    @FXML
+    private ListView<?> lstRehearsalRequests;
+    @FXML
+    private TextField txtLastName;
+    @FXML
+    private ListView<Instrument> lstInstruments;
+    @FXML
+    private TextField txtFirstName;
+    @FXML
+    private Button btnDecline;
+
+    @FXML
+    void btnSave_onAction() {
+    	String password = pwdPassword.getText();
+    	String firstName = txtFirstName.getText();
+    	String lastName = txtLastName.getText();
+    	Date birthdate = Date.valueOf (dateBirthdate.getValue());
+    	Location habitation = cboxHabitation.getValue();
+    	Vector<Instrument> instruments = new Vector<Instrument> (Arrays.asList (lstInstruments.getSelectionModel().getSelectedItems().toArray(new Instrument[0])));
+    	Musician musician = new Musician (username, password, firstName, lastName, instruments, habitation, birthdate);
+    	
+    	databaseManager.updateMusician (musician);
+    }
+
+    @FXML
+    void btnAccept_onAction() {
+
+    }
+
+    @FXML
+    void btnDecline_onAction() {
+
+    }
+}

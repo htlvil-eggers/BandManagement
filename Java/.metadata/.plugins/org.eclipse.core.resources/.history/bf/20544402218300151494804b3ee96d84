@@ -1,0 +1,13 @@
+import javafx.fxml.FXML;
+import javafx.scene.web.WebView;
+
+public class CalendarController {
+
+    @FXML
+    private WebView wviewCalendar;
+
+    @FXML
+    private void initialize() {
+    	this.wviewCalendar.getEngine().load(getClass().getResource("Site.html"));
+    }
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.sql.Connection"/>
+<fullyQualifiedTypeName name="java.sql.DriverManager"/>
+<fullyQualifiedTypeName name="java.sql.Statement"/>
+<fullyQualifiedTypeName name="java.sql.ResultSet"/>
+<fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
+<fullyQualifiedTypeName name="pkgMain.OracleDatabaseManager"/>
+<fullyQualifiedTypeName name="javafx.scene.control.Alert.AlertType"/>
+<fullyQualifiedTypeName name="java.util.ListResourceBundle"/>
+<fullyQualifiedTypeName name="pkgModel.OracleDatabaseManager"/>
+<fullyQualifiedTypeName name="java.util.ResourceBundle"/>
+<fullyQualifiedTypeName name="pkgModel.EnumMusicianData"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="pkgModel.Location"/>
+<fullyQualifiedTypeName name="pkgModel.Instrument"/>
+<fullyQualifiedTypeName name="java.sql.Date"/>
+<fullyQualifiedTypeName name="java.util.Arrays"/>
+<fullyQualifiedTypeName name="pkgModel.Musician"/>
+<fullyQualifiedTypeName name="java.util.Vector"/>
+<fullyQualifiedTypeName name="javafx.fxml.FXMLLoader"/>
+</qualifiedTypeNameHistroy>

@@ -1,0 +1,31 @@
+package pkgController;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+
+public class LoginController {
+	private OracleDatabaseManager databaseManager;
+	
+    @FXML
+    private Button btnClose;
+    @FXML
+    private TextField txtUsername;
+    @FXML
+    private Button btnLogin;
+    @FXML
+    private TextField txtPassword;
+    @FXML
+    private TextField txtBand;
+    
+    @FXML
+    void btnLogin_onAction() {
+
+    }
+
+    @FXML
+    void btnClose_onAction() {
+
+    }
+
+}
