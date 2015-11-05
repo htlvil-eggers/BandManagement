@@ -31,5 +31,7 @@
         <Button x:Name="btnDeleteSelectedObject" Content="Ausgewähltes Objekt löschen" HorizontalAlignment="Left" Margin="610,43,0,0" VerticalAlignment="Top" Width="167" Click="btnDeleteSelectedObject_Click"/>
         <Label x:Name="lblError" Content="" HorizontalAlignment="Left" Margin="55,649,0,0" VerticalAlignment="Top" Width="1030" Foreground="#FFCB0404" FontWeight="Bold"/>
         <Button x:Name="btnUpdateSelectedObject" Content="Update" HorizontalAlignment="Left" Margin="516,43,0,0" VerticalAlignment="Top" Width="75" Click="btnUpdateSelectedObject_Click"/>
+        <Label x:Name="lblIntroduction" Content="Anleitung: Bei Ort: Links-Click zum Einfügen | Bei Straße: Linke Muastaste halten und ziehen" HorizontalAlignment="Left" Margin="643,4,0,0" VerticalAlignment="Top" Height="32"/>
+        <Label x:Name="lblIntroduction2" Content="Rechts-Click zum Auswählen => dann per DragDrop verschiebbar" HorizontalAlignment="Left" Margin="782,27,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
