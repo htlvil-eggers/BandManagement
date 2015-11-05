@@ -16,9 +16,9 @@
                     <Label x:Name="lblBandnameSignIn" Content="Bandname:" HorizontalAlignment="Left" Margin="15,10,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="lblUsernameSignIn" Content="Benutzername:" HorizontalAlignment="Left" Margin="15,41,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="lblPasswordSignIn" Content="Passwort:" HorizontalAlignment="Left" Margin="15,72,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="tbBandnameSignIn" HorizontalAlignment="Left" Height="23" Margin="142,12,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="194"/>
-                    <TextBox x:Name="tbUsernameSignIn" HorizontalAlignment="Left" Height="23" Margin="142,44,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="194"/>
-                    <PasswordBox x:Name="pbPasswordSignIn" HorizontalAlignment="Left" Height="23" Margin="142,75,0,0" VerticalAlignment="Top" Width="194"/>
+                    <TextBox x:Name="tbBandnameSignIn" HorizontalAlignment="Left" Height="23" Margin="142,12,0,0" TextWrapping="Wrap" Text="edelBlech" VerticalAlignment="Top" Width="194"/>
+                    <TextBox x:Name="tbUsernameSignIn" HorizontalAlignment="Left" Height="23" Margin="142,44,0,0" TextWrapping="Wrap" Text="eggers" VerticalAlignment="Top" Width="194"/>
+                    <PasswordBox x:Name="pbPasswordSignIn" Password="eggers" HorizontalAlignment="Left" Height="23" Margin="142,75,0,0" VerticalAlignment="Top" Width="194"/>
                     <Button x:Name="btnSignIn" BorderThickness="2" Content="Anmelden" HorizontalAlignment="Left" Margin="261,131,0,0" VerticalAlignment="Top" Width="75" Click="btnSignIn_Click" FontWeight="Bold"/>
                 </Grid>
 

@@ -8,13 +8,28 @@
         Title="Spatial Client" Height="722.738" Width="1149.014">
     <Grid>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="558" Margin="55,73,0,0" VerticalAlignment="Top" Width="1030">
-            <Canvas x:Name="canSpatialData" MouseLeftButtonDown="canSpatialData_MouseLeftButtonDown"/>
+            <Canvas x:Name="canSpatialData" Background="Transparent" MouseLeftButtonDown="canSpatialData_MouseLeftButtonDown" 
+                    MouseLeftButtonUp="canSpatialData_MouseLeftButtonUp" MouseRightButtonDown="canSpatialData_MouseRightButtonDown" 
+                    MouseMove="canSpatialData_MouseMove" MouseLeave="canSpatialData_MouseLeave" MouseWheel="canSpatialData_MouseWheel">
+                <Canvas.RenderTransform>
+                    <ScaleTransform x:Name="sTCanSpatialData"/>
+                </Canvas.RenderTransform>
+            </Canvas>
         </Border>
+
+        <Popup x:Name="popMouseInCanvas" AllowsTransparency="True" Placement="Relative" PlacementTarget="{Binding ElementName=canSpatialData}">
+            <TextBlock x:Name="tbPopMouseInCanvas"></TextBlock>
+        </Popup>
 
         <Grid x:Name="grInputMode" Margin="55,10,791.4,624.8">
             <Label x:Name="lblInputMode" Content="Eingabemodus:" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
             <RadioButton x:Name="rbInputModeCity" Content="Ort" IsChecked="true" HorizontalAlignment="Left" Margin="96,7,0,0" VerticalAlignment="Top" Checked="rbgInputMode_changed"/>
             <RadioButton x:Name="rbInputModeStreet" Content="Straße" HorizontalAlignment="Left" Margin="96,28,0,0" VerticalAlignment="Top" Checked="rbgInputMode_changed"/>
         </Grid>
+        <Label x:Name="lblNameOfObject" Content="Name des Objekts:" HorizontalAlignment="Left" Margin="356,10,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbNameOfObject" HorizontalAlignment="Left" Height="23" Margin="471,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="btnDeleteSelectedObject" Content="Ausgewähltes Objekt löschen" HorizontalAlignment="Left" Margin="610,43,0,0" VerticalAlignment="Top" Width="167" Click="btnDeleteSelectedObject_Click"/>
+        <Label x:Name="lblError" Content="" HorizontalAlignment="Left" Margin="55,649,0,0" VerticalAlignment="Top" Width="1030" Foreground="#FFCB0404" FontWeight="Bold"/>
+        <Button x:Name="btnUpdateSelectedObject" Content="Update" HorizontalAlignment="Left" Margin="516,43,0,0" VerticalAlignment="Top" Width="75" Click="btnUpdateSelectedObject_Click"/>
     </Grid>
 </Window>

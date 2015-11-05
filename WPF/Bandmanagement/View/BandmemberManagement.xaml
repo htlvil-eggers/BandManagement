@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bandmanagement.View"
         mc:Ignorable="d"
-        Title="BandmemberManagement" Height="432.958" Width="592.923">
+        Title="BandmemberManagement" Height="702.058" Width="941.523">
     <Grid>
-        <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="81" Margin="376,-26,-11.6,0" VerticalAlignment="Top" Width="222">
+        <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="81" Margin="727,-19,-13.8,0" VerticalAlignment="Top" Width="222">
             <Grid x:Name="grSignInInfo" Background="#FFEAF9FF">
                 <Label x:Name="lblSignedInUsername" Content="Username:" HorizontalAlignment="Left" Margin="5,25,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lblSignedInBand" Content="Band:" HorizontalAlignment="Left" Margin="5,49,0,0" VerticalAlignment="Top"/>
@@ -15,6 +15,45 @@
                 <Label x:Name="lblDisplaySignedInUsername" Content="" HorizontalAlignment="Left" Margin="76,25,0,0" VerticalAlignment="Top" Width="132"/>
             </Grid>
         </Border>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="518" Margin="25,101,0,0" VerticalAlignment="Top" Width="864">
+            <TabItem Header="Mitgliederverwaltung">
+                <Grid Background="#FFEAF9FF">
+                    <Label x:Name="lblCurrentBandmembers" Content="Derzeitige Mitglieder:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <Border Margin="153,10,0,0" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="121" Width="535" BorderBrush="Black">
+                        <DataGrid x:Name="dgCurrentBandmembers">
+                        </DataGrid>
+                    </Border>
+                    <Button x:Name="btnRemoveBandmember" Content="Mitglied entfernen" HorizontalAlignment="Left" Margin="566,150,0,0" VerticalAlignment="Top" Width="122"/>
+                    <Label x:Name="lblAddBandmember" Content="Neues Mitglied hinzufügen:" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top"/>
+                    <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="122" Margin="191,220,0,0" VerticalAlignment="Top" Width="497">
+                        <Grid>
+                            <Label x:Name="lblbAddBandmemberUsername" Content="Username:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                            <Label x:Name="lblbAddBandmemberPassword" Content="Password:" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="tbAddBandmemberUsername" HorizontalAlignment="Left" Height="23" Margin="100,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="218"/>
+                            <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="100,48,0,0" VerticalAlignment="Top" Height="23" Width="218"/>
+                            <Button x:Name="btnAddBandmember" Content="Mitglied hinzufügen" HorizontalAlignment="Left" Margin="361,85,0,0" VerticalAlignment="Top" Width="116"/>
+                        </Grid>
+                    </Border>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Terminverwaltung">
+                <Grid Background="#FFEAF9FF">
+                    <Calendar HorizontalAlignment="Left" Margin="202,10,0,0" VerticalAlignment="Top" Width="210"/>
+                    <Label x:Name="lblUpcomingAppointments" Content="Anstehende Termine:" HorizontalAlignment="Left" Margin="10,49,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="lblReceivedRequests" Content="Eingegangene Terminanfragen:" HorizontalAlignment="Left" Margin="10,240,0,0" VerticalAlignment="Top"/>
+                    <Border Margin="202,240,0,0" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="121" Width="535" BorderBrush="Black">
+                        <DataGrid x:Name="dgReceivedRequests">
+                        </DataGrid>
+                    </Border>
+                    <Button x:Name="btnAcceptRequest" Content="Anfrage annehmen" HorizontalAlignment="Left" Margin="480,373,0,0" VerticalAlignment="Top" Width="117"/>
+                    <Button x:Name="btnDeclineRequest" Content="Anfrage ablehnen" HorizontalAlignment="Left" Margin="620,373,0,0" VerticalAlignment="Top" Width="117"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Auswertungen">
+                <Grid Background="#FFEAF9FF"/>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 </Window>
