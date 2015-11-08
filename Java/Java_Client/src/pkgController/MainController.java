@@ -13,6 +13,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebView;
@@ -61,6 +62,8 @@ public class MainController {
 		databaseManager = (OracleDatabaseManager) resources.getObject ("databaseManager");
 		username = (String) resources.getObject("username");
 		
+		configureComponents();
+		
 		try {
 			initializeComponentsPersonalDataTab();
 			initializeComponentsRehearsalRequestsTab();
@@ -72,6 +75,10 @@ public class MainController {
 			messageWindow.show();
 			e.printStackTrace();
 		}
+	}
+	
+	private void configureComponents() {
+		lstInstruments.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
 	
 	private void initializeComponentsRehearsalRequestsTab() {

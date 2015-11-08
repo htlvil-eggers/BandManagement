@@ -333,7 +333,7 @@
             if (today.getDate() == date.getDate() && today.getMonth() == date.getMonth() && today.getYear() == date.getYear()) {
               data.weeks[indic].days[indic2].classname.push('datepickerToday');
             }
-            if (date > today) {
+            if (date > options.dateTo || date < options.dateFrom) {
               // current month, date in future
               data.weeks[indic].days[indic2].classname.push('datepickerFuture');
             }

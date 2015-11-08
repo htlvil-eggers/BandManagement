@@ -19,4 +19,5 @@
 <fullyQualifiedTypeName name="pkgModel.Musician"/>
 <fullyQualifiedTypeName name="java.util.Vector"/>
 <fullyQualifiedTypeName name="javafx.fxml.FXMLLoader"/>
+<fullyQualifiedTypeName name="javafx.scene.control.SelectionMode"/>
 </qualifiedTypeNameHistroy>

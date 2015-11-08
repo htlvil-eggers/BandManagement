@@ -333,7 +333,7 @@
             if (today.getDate() == date.getDate() && today.getMonth() == date.getMonth() && today.getYear() == date.getYear()) {
               data.weeks[indic].days[indic2].classname.push('datepickerToday');
             }
-            if (date > today) {
+            if (date > options.dateTo || date < optionsdateFrom) {
               // current month, date in future
               data.weeks[indic].days[indic2].classname.push('datepickerFuture');
             }
@@ -536,9 +536,6 @@
                   tmp.addMonths(val > 15 ? -1 : 1);
                 }
                 tmp.setDate(val);
-		
-		var dateFrom = new Date (2015, 9, 10, 0,0,0,0);
-		var dateTo = new Date (2015, 10, 11, 0,0,0,0);
 
 		if (tmp > options.dateTo || tmp < options.dateFrom) {
 			return false;

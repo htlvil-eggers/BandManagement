@@ -11,12 +11,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import pkgModel.OracleDatabaseManager;
 
+//"jdbc:oracle:thin:@192.168.128.151:1521:ora11g"
+//"jdbc:oracle:thin:@212.152.179.117:1521:ora11g"
+
 public class Main extends Application {
-	private static OracleDatabaseManager databaseManager;
-	private static ResourceBundle resources;
-	private static final String CONNECTION_STRING = "jdbc:oracle:thin:@212.152.179.117:1521:ora11g";
-	private static final String USERNAME = "d5bhifs25";
-	private static final String PASSWORD = "edelBlech";
+	private OracleDatabaseManager databaseManager;
+	private ResourceBundle resources;
+	private final String CONNECTION_STRING = "jdbc:oracle:thin:@192.168.128.151:1521:ora11g";
+	private final String USERNAME = "d5bhifs25";
+	private final String PASSWORD = "edelBlech";
 	
 	public static void main(String[] args) {
 		launch (args);
