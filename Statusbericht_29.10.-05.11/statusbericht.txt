@@ -1,0 +1,8 @@
+Schiene 1: Egger
+Schiene 2: Delfser
+
+Schiene 1 (Java): 
+Kalender wurde implementiert (mit WebView -> eingebetteter HTML-Seite). Features: Mehrere Tage sind selektierbar und man kann ein Interval angeben, in dem das Selektieren möglich ist.
+
+Schiene 2 (C#):
+Die GUI für Aufgaben-, Termin- und Mitgliederverwaltung wurde erstellt.

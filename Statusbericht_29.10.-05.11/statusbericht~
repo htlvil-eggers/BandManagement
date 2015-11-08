@@ -5,3 +5,4 @@ Schiene 1 (Java):
 Kalender wurde implementiert (mit WebView -> eingebetteter HTML-Seite). Features: Mehrere Tage sind selektierbar und man kann ein Interval angeben, in dem das selektieren möglich ist.
 
 Schiene 2 (C#):
+Die GUI für Aufgaben-, Termin- und Mitgliederverwaltung wurde erstellt.
