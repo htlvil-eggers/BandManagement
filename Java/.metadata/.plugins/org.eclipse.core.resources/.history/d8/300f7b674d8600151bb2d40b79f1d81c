@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgController.MainController">
+  <tabs>
+    <Tab text="Personal Data">
+         <content>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <GridPane prefHeight="448.0" prefWidth="600.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="51.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="93.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="126.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="161.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="176.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="198.0" minHeight="10.0" prefHeight="160.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="Password:" />
+                        <Label text="First Name:" GridPane.rowIndex="1" />
+                        <Label text="Last Name:" GridPane.rowIndex="2" />
+                        <Label text="Birthdate:" GridPane.rowIndex="3" />
+                        <Label text="Habitation:" GridPane.rowIndex="4" />
+                        <Label text="Instruments:" GridPane.rowIndex="5" />
+                        <PasswordField fx:id="pwdPassword" GridPane.columnIndex="1" />
+                        <TextField fx:id="txtFirstName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtLastName" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <DatePicker fx:id="dateBirthdate" prefHeight="14.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="cboxHabitation" prefHeight="27.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <ListView fx:id="lstInstruments" prefHeight="72.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+                  <HBox prefHeight="62.0" prefWidth="600.0">
+                     <children>
+                        <Button fx:id="btnSave" mnemonicParsing="false" onAction="#btnSave_onAction" text="Save" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </content>
+    </Tab>
+    <Tab text="Appearance Requests">
+         <content>
+            <HBox>
+               <children>
+                  <ListView fx:id="lstAppearances" prefHeight="200.0" />
+                  <VBox>
+                     <children>
+                        <TextArea fx:id="txtareaDetail" prefHeight="367.0" />
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Button fx:id="btnAccept" mnemonicParsing="false" onAction="#btnAccept_onAction" text="Accept" />
+                              <Button fx:id="btnDecline" mnemonicParsing="false" onAction="#btnDecline_onAction" text="Decline" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </content>
+    </Tab>
+      <Tab text="Rehearsal Requests">
+         <content>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ListView fx:id="lstRehearsalRequests" prefHeight="367.0" prefWidth="217.0" />
+                  <VBox prefHeight="367.0" prefWidth="392.0">
+                     <children>
+                        <WebView fx:id="wviewCalendar" prefHeight="367" prefWidth="99.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </content>
+      </Tab>
+  </tabs>
+</TabPane>

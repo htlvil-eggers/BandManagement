@@ -1,0 +1,26 @@
+<! doctype>
+<html>
+<head>
+	<script type="text/javascript" src="./js/jquery.js"></script>
+	<script type="text/javascript" src="./js/datepicker.js"></script>
+	<link rel="stylesheet" media="screen" type="text/css" href="./css/base.css" />
+	<link rel="stylesheet" media="screen" type="text/css" href="./css/clean.css" />
+
+<script type="text/javascript">
+		$(document).ready(function() {
+		  $('#simple-calendar').DatePicker({
+		    mode: 'multiple',
+		    inline: true,
+		    calendars: 1,
+		    dateFrom: new Date (2015, 10, 10, 0,0,0,0),
+		    dateTo: new Date (2015, 11, 10, 0,0,0,0),
+		  });	
+		});
+</script>
+</head>
+
+
+<div id="simple-calendar"></div>
+
+
+</html>
