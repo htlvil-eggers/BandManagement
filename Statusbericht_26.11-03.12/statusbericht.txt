@@ -1,0 +1,9 @@
+Schiene 1: Egger  
+Schiene 2: Delfser  
+
+ 
+Schiene 1 (Java):   
+Formular zur Eingabe möglicher Probentermine vollständig implementiert (mit Datenbankanbindung).
+ 
+Schiene 2 (C#):  
+Implementierung der Anfragenliste (Freigeben eingegangener Anfragen für die Mitglieder zum Bestätigen). Mit Datenbankanbindung. 
