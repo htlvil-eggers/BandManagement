@@ -20,4 +20,7 @@
 <fullyQualifiedTypeName name="java.util.Vector"/>
 <fullyQualifiedTypeName name="javafx.fxml.FXMLLoader"/>
 <fullyQualifiedTypeName name="javafx.scene.control.SelectionMode"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="javafx.beans.value.ChangeListener"/>
+<fullyQualifiedTypeName name="pkgModel.Appearance"/>
 </qualifiedTypeNameHistroy>

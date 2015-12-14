@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgController.MainController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="676.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pkgController.MainController">
   <tabs>
     <Tab text="Personal Data">
          <content>
@@ -93,6 +93,26 @@
                            </children>
                         </GridPane>
                         <Button fx:id="btnSavePossibleTimes" mnemonicParsing="false" onAction="#btnSavePossibleTimes_onAction" text="Save Possible Times" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </content>
+      </Tab>
+      <Tab text="Other Appointment Requests">
+         <content>
+            <HBox>
+               <children>
+                  <ListView fx:id="lstAppointments" prefHeight="200.0" />
+                  <VBox>
+                     <children>
+                        <TextArea fx:id="txtareaAppointmentDetail" prefHeight="367.0" />
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Button fx:id="btnAcceptAppointment" mnemonicParsing="false" onAction="#btnAcceptAppointment_onAction" text="Accept" />
+                              <Button fx:id="btnDeclineAppointment" mnemonicParsing="false" onAction="#btnDeclineAppointment_onAction" text="Decline" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>

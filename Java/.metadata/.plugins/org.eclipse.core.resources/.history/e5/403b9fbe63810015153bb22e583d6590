@@ -1,7 +1,0 @@
-package pkgModel;
-
-public class Instrument {
-	private String name;
-	
-	
-}

@@ -17,7 +17,7 @@ import pkgModel.OracleDatabaseManager;
 public class Main extends Application {
 	private OracleDatabaseManager databaseManager;
 	private ResourceBundle resources;
-	private final String CONNECTION_STRING = "jdbc:oracle:thin:@192.168.128.151:1521:ora11g";
+	private final String CONNECTION_STRING = "jdbc:oracle:thin:@212.152.179.117:1521:ora11g";
 	private final String USERNAME = "d5bhifs25";
 	private final String PASSWORD = "edelBlech";
 	

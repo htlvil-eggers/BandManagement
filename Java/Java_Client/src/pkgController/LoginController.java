@@ -50,7 +50,8 @@ public class LoginController {
 					protected Object[][] getContents() {
 						return new Object[][] {
 							{"databaseManager", databaseManager},
-							{"username", username}
+							{"username", username},
+							{"bandname", bandname}
 						};
 					}
 				};

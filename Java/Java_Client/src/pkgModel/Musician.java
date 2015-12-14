@@ -1,6 +1,6 @@
 package pkgModel;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Vector;
 
 public class Musician {
