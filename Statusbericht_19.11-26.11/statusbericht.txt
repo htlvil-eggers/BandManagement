@@ -1,0 +1,10 @@
+Schiene 1: Egger 
+Schiene 2: Delfser 
+
+ 
+Schiene 1 (Java):  
+Formular zur Bestätigung/Ablehnung einer Auftragsanfrage implementiert (mit Datenbankanbindung).
+
+ 
+Schiene 2 (C#): 
+Hinzufügen von neuen Mitgliedern wurde implementiert (mit Datenbankanbindung).

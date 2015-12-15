@@ -1,0 +1,9 @@
+Schiene 1: Egger  
+Schiene 2: Delfser  
+
+ 
+Schiene 1 (Java):   
+Formular zum Bestätigen und Ablehnen von Veranstaltungen, die nicht Proben oder Auftritte sind (mit Datenbankanbindung).
+ 
+Schiene 2 (C#):  
+Implementierung der Anfrage zum Eintragen möglicher Probentermine der Mitglieder (mit Datenbankanbindung).
