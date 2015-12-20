@@ -55,7 +55,7 @@
                   <ListView fx:id="lstAppearances" prefHeight="200.0" />
                   <VBox>
                      <children>
-                        <TextArea fx:id="txtareaDetail" prefHeight="367.0" />
+                        <TextArea fx:id="txtareaDetail" editable="false" prefHeight="367.0" />
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Button fx:id="btnAccept" mnemonicParsing="false" onAction="#btnAccept_onAction" text="Accept" />
@@ -106,7 +106,7 @@
                   <ListView fx:id="lstAppointments" prefHeight="200.0" />
                   <VBox>
                      <children>
-                        <TextArea fx:id="txtareaAppointmentDetail" prefHeight="367.0" />
+                        <TextArea fx:id="txtareaAppointmentDetail" editable="false" prefHeight="367.0" />
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Button fx:id="btnAcceptAppointment" mnemonicParsing="false" onAction="#btnAcceptAppointment_onAction" text="Accept" />

@@ -93,6 +93,8 @@ public class MainController {
 			initializeComponents();
 		} catch (SQLException e) {
 			printAlertMessage(e.getMessage());
+			
+			e.printStackTrace();
 		}
 	}
 	
@@ -113,7 +115,12 @@ public class MainController {
 	private void configureComponentsOtherAppointmentRequestsTab() {
 		lstAppointments.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Appointment>() {
 			public void changed (ObservableValue <? extends Appointment> observable, Appointment oldValue, Appointment newValue) {
-				updateTextareaFromAppointment (newValue, txtareaAppointmentDetail);
+				if (newValue != null) {
+					updateTextareaFromAppointment (newValue, txtareaAppointmentDetail);
+				}
+				else {
+					txtareaAppointmentDetail.setText("");
+				}
 			}
 		});
 	}
@@ -121,7 +128,12 @@ public class MainController {
 	private void configureComponentsAppearanceRequestsTab() {
 		lstAppearances.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Appearance>() {
 			public void changed (ObservableValue <? extends Appearance> observable, Appearance oldValue, Appearance newValue) {
-				updateTextareaFromAppointment (newValue, txtareaDetail);
+				if (newValue != null) {
+					updateTextareaFromAppointment (newValue, txtareaDetail);
+				}
+				else {
+					txtareaDetail.setText("");
+				}
 			}
 		});
 	}
@@ -129,7 +141,12 @@ public class MainController {
 	private void configureComponentsRehearsalRequestsTab() {
 		lstRehearsalRequests.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<RehearsalRequest>() {
 			public void changed (ObservableValue <? extends RehearsalRequest> observable, RehearsalRequest oldValue, RehearsalRequest newValue) {
-				updateCalendarFromRehearsalRequest (newValue);
+				if (newValue != null) {
+					updateCalendarFromRehearsalRequest (newValue);
+				}
+				else {
+					wviewCalendar.getEngine().executeScript("removeCalendar();");
+				}
 			}
 
 			private void updateCalendarFromRehearsalRequest(RehearsalRequest rehearsalRequest) {
@@ -156,16 +173,19 @@ public class MainController {
 			lstAppearances.setItems(FXCollections.observableArrayList(databaseManager.getUnansweredAppearanceRequests(username, bandname)));
 		} catch (SQLException e) {
 			printAlertMessage(e.getMessage());
+			
+			e.printStackTrace();
 		}
 	}
 	
 	private void updateTextareaFromAppointment (Appointment appointment, TextArea textArea) {
 		String newLine = System.getProperty("line.separator");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 		String text = "";
 		
 		text += "Titel: " + appointment.getName() + newLine + newLine;
-		text += "Start time: " + appointment.getStartTime() + newLine;
-		text += "End time: " + appointment.getEndTime() + newLine + newLine;
+		text += "Start time: " + formatter.format(appointment.getStartTime()) + newLine;
+		text += "End time: " + formatter.format(appointment.getEndTime()) + newLine + newLine;
 		text += "Location: " + appointment.getLocation().getName() + newLine + newLine;
 		text += "Description: " + appointment.getDescription();
 	
@@ -176,6 +196,9 @@ public class MainController {
 		this.wviewCalendar.getEngine().load(Thread.currentThread().getContextClassLoader().getResource("pkgResources/Site.html").toExternalForm());
 	
 		lstRehearsalRequests.setItems(FXCollections.observableArrayList(databaseManager.getRehearsalRequests (bandname)));
+	
+		txtFrom.setText("00:00");
+		txtTo.setText("24:00");
 	}
     
     private void initializeComponentsPersonalDataTab() throws SQLException {
@@ -190,7 +213,7 @@ public class MainController {
 		cboxHabitation.setValue (musician.getHabitation());
 		
 		if (musician.getBirthdate() != null) {
-			dateBirthdate.setValue(musician.getBirthdate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			dateBirthdate.setValue(((java.sql.Date)musician.getBirthdate()).toLocalDate());
 		}
 		
 		for (Instrument instrument : musician.getInstruments()) {
@@ -203,6 +226,8 @@ public class MainController {
 			lstAppointments.setItems(FXCollections.observableArrayList(databaseManager.getUnansweredAppointmentRequests(username, bandname)));
 		} catch (SQLException e) {
 			printAlertMessage(e.getMessage());
+			
+			e.printStackTrace();
 		}
 	}
 
@@ -235,12 +260,13 @@ public class MainController {
     	if (selectedAppearance != null) {
     		try {
 				databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, true);
-			} catch (SQLException e) {
+				lstAppearances.getItems().remove(selectedAppearance);
+    		} catch (SQLException e) {
 				printAlertMessage(e.getMessage());
 			}
     	}
     	else {
-			printAlertMessage("Keinen Auftritt ausgewählt!");
+			printAlertMessage("No appearance selected!");
     	}
     }
 
@@ -251,12 +277,13 @@ public class MainController {
     	if (selectedAppearance != null) {
     		try {
 				databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, false);
+				lstAppearances.getItems().remove(selectedAppearance);
 			} catch (SQLException e) {
 				printAlertMessage(e.getMessage());
 			}
     	}
     	else {
-			printAlertMessage("Keinen Auftritt ausgewählt!");
+			printAlertMessage("No appearance selected!");
     	}
     }
     
@@ -267,7 +294,8 @@ public class MainController {
     	if (selectedAppointment != null) {
     		try {
 				databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, true);
-			} catch (SQLException e) {
+				lstAppointments.getItems().remove(selectedAppointment);
+    		} catch (SQLException e) {
 				printAlertMessage(e.getMessage());
 			}
     	}
@@ -283,6 +311,7 @@ public class MainController {
     	if (selectedAppointment != null) {
     		try {
 				databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, false);
+				lstAppointments.getItems().remove(selectedAppointment);
 			} catch (SQLException e) {
 				printAlertMessage(e.getMessage());
 			}
@@ -294,31 +323,36 @@ public class MainController {
     
     @FXML
     private void btnSavePossibleTimes_onAction() {
-    	JSObject jsObject = (JSObject)wviewCalendar.getEngine().executeScript("getSelectedDates();");
-    	Vector<Date> selectedDates = new Vector<Date>();
-    	int i = 0;
-    	
-    	while (!jsObject.getSlot(i).equals("undefined")) {
-    		selectedDates.add(new Date(((Double)((JSObject)jsObject.getSlot(i)).call("getTime")).longValue()));
-    		i++;
+    	if (lstRehearsalRequests.getSelectionModel().getSelectedItem() != null) {
+	    	JSObject jsObject = (JSObject)wviewCalendar.getEngine().executeScript("getSelectedDates();");
+	    	Vector<Date> selectedDates = new Vector<Date>();
+	    	int i = 0;
+	    	
+	    	while (!jsObject.getSlot(i).equals("undefined")) {
+	    		selectedDates.add(new Date(((Double)((JSObject)jsObject.getSlot(i)).call("getTime")).longValue()));
+	    		i++;
+	    	}
+	    	
+	    	Date []dates;
+	    	for (Date date : selectedDates) {
+	    		try {
+	    			dates = generateAvailableTimesFromDateAndTimeFields(date);
+	    			
+	        		try {
+	    				databaseManager.addAvailableTimes (bandname, username, dates[0], dates[1]);
+	    			} catch (SQLException e) {
+	    				printAlertMessage(e.getMessage());
+	    				
+	    				e.printStackTrace();
+	    			}
+	    		}
+	    		catch (Exception e) {
+	    			printAlertMessage("Please input both times in correct format: (hh:mm)");
+	    		}
+	    	}
     	}
-    	
-    	Date []dates;
-    	for (Date date : selectedDates) {
-    		try {
-    			dates = generateAvailableTimesFromDateAndTimeFields(date);
-    			
-        		try {
-    				databaseManager.addAvailableTimes (bandname, username, dates[0], dates[1]);
-    			} catch (SQLException e) {
-    				printAlertMessage(e.getMessage());
-    				
-    				e.printStackTrace();
-    			}
-    		}
-    		catch (Exception e) {
-    			printAlertMessage("Please input both times in correct format: (hh:mm)");
-    		}
+    	else {
+    		printAlertMessage("No rehearsal request selected!");
     	}
     }
     

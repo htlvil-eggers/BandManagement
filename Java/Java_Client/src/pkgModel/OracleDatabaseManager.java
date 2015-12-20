@@ -286,7 +286,7 @@ public class OracleDatabaseManager implements AutoCloseable {
 	public Vector<Appointment> getUnansweredAppointmentRequests (String username, String bandname) throws SQLException {
 		Vector<Appointment> appointments = new Vector<Appointment>();
 		
-		try (PreparedStatement statement = connection.prepareStatement("select id, location_id, start_time, end_time, grounded, name, description from appointments ao where not exists (select * from appointment_attendances aa where aa.appointment_id = ao.id and aa.MUSICIAN_ID = ? and aa.BAND_ID = ao.BAND_ID) and ao.BAND_ID = ?")) {
+		try (PreparedStatement statement = connection.prepareStatement("select id, location_id, start_time, end_time, name, description from appointments ao where not exists (select * from appointment_attendances aa where aa.appointment_id = ao.id and aa.MUSICIAN_ID = ? and aa.BAND_ID = ao.BAND_ID) and ao.BAND_ID = ? and not exists (select appointment_id from appearances where appointment_id = id) and not exists (select appointment_id from rehearsals where appointment_id = id) and grounded = 0")) {
 			int musicianId = getIdOfUsername (username);
 			int bandId = getIdOfBand(bandname);
 			
@@ -296,7 +296,7 @@ public class OracleDatabaseManager implements AutoCloseable {
 			try (ResultSet resultSet = statement.executeQuery()) {
 			
 				while (resultSet.next()) {
-					appointments.add (new Appointment (resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("description"), getLocationById (resultSet.getInt("locaiont_id")), resultSet.getTimestamp("start_time"), resultSet.getTimestamp("end_time")));
+					appointments.add (new Appointment (resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("description"), getLocationById (resultSet.getInt("location_id")), resultSet.getTimestamp("start_time"), resultSet.getTimestamp("end_time")));
 				}
 			}
 		}
@@ -318,7 +318,7 @@ public class OracleDatabaseManager implements AutoCloseable {
 	public Vector<Appearance> getUnansweredAppearanceRequests(String username, String bandname) throws SQLException {
 		Vector<Appearance> appearances = new Vector<Appearance>();
 		
-		try (PreparedStatement statement = connection.prepareStatement("select id, location_id, start_time, end_time, grounded, name, description from appointments ao inner join appearances ae on ao.id = ae.appointment_id where not exists (select * from appointment_attendances aa where aa.appointment_id = ae.APPOINTMENT_ID and aa.MUSICIAN_ID = ? and aa.BAND_ID = ae.BAND_ID) and ae.BAND_ID = ?")) {
+		try (PreparedStatement statement = connection.prepareStatement("select id, location_id, start_time, end_time, grounded, name, description from appointments ao inner join appearances ae on ao.id = ae.appointment_id where not exists (select * from appointment_attendances aa where aa.appointment_id = ae.APPOINTMENT_ID and aa.MUSICIAN_ID = ? and aa.BAND_ID = ae.BAND_ID) and ae.BAND_ID = ?  and grounded = 0")) {
 			int musicianId = getIdOfUsername (username);
 			int bandId = getIdOfBand(bandname);
 			
@@ -328,7 +328,7 @@ public class OracleDatabaseManager implements AutoCloseable {
 			try (ResultSet resultSet = statement.executeQuery()) {
 			
 				while (resultSet.next()) {
-					appearances.add (new Appearance (resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("description"), getLocationById (resultSet.getInt("locaiont_id")), resultSet.getTimestamp("start_time"), resultSet.getTimestamp("end_time")));
+					appearances.add (new Appearance (resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("description"), getLocationById (resultSet.getInt("location_id")), resultSet.getTimestamp("start_time"), resultSet.getTimestamp("end_time")));
 				}
 			}
 		}
