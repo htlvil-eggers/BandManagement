@@ -1,0 +1,5 @@
+package pkgRest;
+
+public class Musician {
+
+}

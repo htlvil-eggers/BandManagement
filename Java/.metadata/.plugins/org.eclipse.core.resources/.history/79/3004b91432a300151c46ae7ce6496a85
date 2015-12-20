@@ -1,0 +1,9 @@
+package pkgRest;
+
+//"jdbc:oracle:thin:@192.168.128.151:1521:ora11g"
+//"jdbc:oracle:thin:@212.152.179.117:1521:ora11g"
+
+@Path("Musician")
+public class Musician {
+	private final String CONNECTION_STRING = "jdbc:oracle:thin:@212.152.179.117:1521:ora11g";
+}

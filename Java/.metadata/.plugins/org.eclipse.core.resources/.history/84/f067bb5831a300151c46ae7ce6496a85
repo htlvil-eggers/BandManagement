@@ -1,0 +1,6 @@
+package pkgRest;
+
+@Path("Musician")
+public class Musician {
+
+}
