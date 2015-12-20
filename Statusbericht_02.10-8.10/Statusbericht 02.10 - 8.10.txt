@@ -1,9 +1,0 @@
--Schiene 1: Egger
--Schiene 2: Delfser
--
--Beide Schienen arbeiteten zusammen an der Entwicklung der Datenbankstruktur.
--
--Logisches Modell wurde erstellt.
--Aus dem logischen Modell wurde das physische abgeleitet (physisches_Modell.sql).
--Datenbankserver wurde ausgewählt ("aphrodite" mit Benutzernamen "d5bhifs25").
--Die SQL-Statements wurden abgesetzt.

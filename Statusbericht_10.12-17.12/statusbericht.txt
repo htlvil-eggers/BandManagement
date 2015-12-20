@@ -1,0 +1,14 @@
+<<<<<<< HEAD
+Schiene 1: Egger  
+Schiene 2: Delfser  
+
+ 
+Schiene 1 (Java):
+Erstellung der REST-Schnittstelle für Bandmitglieder.
+Abschluss des Meilensteins. Tests zusammen mit dem C#-Client. Fehlerkorrekturen.
+ 
+Schiene 2 (C#):  
+Abschluss des Meilensteins. Tests zusammen mit dem Java-Client. Fehlerkorrekturen.
+=======
+
+>>>>>>> e54c31dc36f298d2879ee3b7114d2035634670fa

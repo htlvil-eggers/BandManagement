@@ -1,1 +1,15 @@
+<<<<<<< HEAD
+Schiene 1: Egger
+Schiene 2: Delfser
 
+Schiene 1 (Java): 
+Setup für Android-Entwicklung abgeschlossen (ADT Eclipse Plugin)
+Tutorials durchgearbeitet und experimentiert
+
+Schiene 2 (C#):
+WPF/C# Projekt wurde angelegt.
+Die erste Maske bei der man sich anmelden beziehungsweise registrieren kann wurde erstellt.
+RadioButtonGroup wurde implementiert.
+=======
+
+>>>>>>> e54c31dc36f298d2879ee3b7114d2035634670fa
