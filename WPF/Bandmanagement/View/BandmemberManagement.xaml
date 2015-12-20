@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bandmanagement.View"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="BandmemberManagement" Height="702.058" Width="941.523">
+        Title="BandmemberManagement" Height="702.058" Width="1185.123" Loaded="Window_Loaded">
     <Grid>
-        <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="81" Margin="727,-19,-13.8,0" VerticalAlignment="Top" Width="222">
+        <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="81" Margin="963,-19,-6.6,0" VerticalAlignment="Top" Width="222">
             <Grid x:Name="grSignInInfo" Background="#FFEAF9FF">
                 <Label x:Name="lblSignedInUsername" Content="Username:" HorizontalAlignment="Left" Margin="5,25,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lblSignedInBand" Content="Band:" HorizontalAlignment="Left" Margin="5,49,0,0" VerticalAlignment="Top"/>
@@ -15,45 +16,118 @@
                 <Label x:Name="lblDisplaySignedInUsername" Content="" HorizontalAlignment="Left" Margin="76,25,0,0" VerticalAlignment="Top" Width="132"/>
             </Grid>
         </Border>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="518" Margin="25,101,0,0" VerticalAlignment="Top" Width="864">
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="571" Margin="25,63,0,0" VerticalAlignment="Top" Width="1122">
             <TabItem Header="Mitgliederverwaltung">
                 <Grid Background="#FFEAF9FF">
                     <Label x:Name="lblCurrentBandmembers" Content="Derzeitige Mitglieder:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                     <Border Margin="153,10,0,0" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="121" Width="535" BorderBrush="Black">
-                        <DataGrid x:Name="dgCurrentBandmembers">
+                        <DataGrid x:Name="dgCurrentBandmembers" IsReadOnly="True" CanUserAddRows="False">
                         </DataGrid>
                     </Border>
-                    <Button x:Name="btnRemoveBandmember" Content="Mitglied entfernen" HorizontalAlignment="Left" Margin="566,150,0,0" VerticalAlignment="Top" Width="122"/>
+                    <Button x:Name="btnRemoveBandmember" Content="Mitglied entfernen" HorizontalAlignment="Left" Margin="566,150,0,0" VerticalAlignment="Top" Width="122" Click="btnRemoveBandmember_Click"/>
                     <Label x:Name="lblAddBandmember" Content="Neues Mitglied hinzufügen:" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top"/>
                     <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="122" Margin="191,220,0,0" VerticalAlignment="Top" Width="497">
                         <Grid>
                             <Label x:Name="lblbAddBandmemberUsername" Content="Username:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
                             <Label x:Name="lblbAddBandmemberPassword" Content="Password:" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top"/>
                             <TextBox x:Name="tbAddBandmemberUsername" HorizontalAlignment="Left" Height="23" Margin="100,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="218"/>
-                            <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Margin="100,48,0,0" VerticalAlignment="Top" Height="23" Width="218"/>
-                            <Button x:Name="btnAddBandmember" Content="Mitglied hinzufügen" HorizontalAlignment="Left" Margin="361,85,0,0" VerticalAlignment="Top" Width="116"/>
+                            <PasswordBox x:Name="pbAddBandmeberPassword" HorizontalAlignment="Left" Margin="100,48,0,0" VerticalAlignment="Top" Height="23" Width="218"/>
+                            <Button x:Name="btnAddBandmember" Content="Mitglied hinzufügen" HorizontalAlignment="Left" Margin="361,85,0,0" VerticalAlignment="Top" Width="116" Click="btnAddBandmember_Click"/>
                         </Grid>
                     </Border>
 
                 </Grid>
             </TabItem>
-            <TabItem Header="Terminverwaltung">
+            <TabItem Header="Auftritterwaltung">
                 <Grid Background="#FFEAF9FF">
-                    <Calendar HorizontalAlignment="Left" Margin="202,10,0,0" VerticalAlignment="Top" Width="210"/>
-                    <Label x:Name="lblUpcomingAppointments" Content="Anstehende Termine:" HorizontalAlignment="Left" Margin="10,49,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="lblReceivedRequests" Content="Eingegangene Terminanfragen:" HorizontalAlignment="Left" Margin="10,240,0,0" VerticalAlignment="Top"/>
-                    <Border Margin="202,240,0,0" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="121" Width="535" BorderBrush="Black">
-                        <DataGrid x:Name="dgReceivedRequests">
+                    <Label x:Name="lblReceivedAppearanceRequests" Content="Eingegangene Terminanfragen:" HorizontalAlignment="Left" Margin="10,18,0,0" VerticalAlignment="Top"/>
+                    <Border Margin="202,18,0,0" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="121" Width="535" BorderBrush="Black">
+                        <DataGrid x:Name="dgReceivedAppearanceRequests" IsReadOnly="True" CanUserAddRows="False">
                         </DataGrid>
                     </Border>
-                    <Button x:Name="btnAcceptRequest" Content="Anfrage annehmen" HorizontalAlignment="Left" Margin="480,373,0,0" VerticalAlignment="Top" Width="117"/>
-                    <Button x:Name="btnDeclineRequest" Content="Anfrage ablehnen" HorizontalAlignment="Left" Margin="620,373,0,0" VerticalAlignment="Top" Width="117"/>
+                    <Button x:Name="btnAcceptAppearanceRequest" Content="Anfrage annehmen" HorizontalAlignment="Left" Margin="480,147,0,0" VerticalAlignment="Top" Width="117" Click="btnAcceptAppearanceRequest_Click"/>
+                    <Button x:Name="btnDeclineAppearanceRequest" Content="Anfrage ablehnen" HorizontalAlignment="Left" Margin="620,147,0,0" VerticalAlignment="Top" Width="117" Click="btnDeclineAppearanceRequest_Click"/>
+                    <Label x:Name="lblAppointments" Content="Akzeptierte Vereinbarungen:" HorizontalAlignment="Left" Margin="10,213,0,0" VerticalAlignment="Top"/>
+                    <Border Margin="202,213,0,0" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="121" Width="535" BorderBrush="Black">
+                        <DataGrid x:Name="dgAppointments" IsReadOnly="True" CanUserAddRows="False" SelectionChanged="dgAppointments_SelectionChanged">
+                        </DataGrid>
+                    </Border>
+                    <Button x:Name="btnGroundAppointment" Content="Fixieren" HorizontalAlignment="Left" Margin="480,339,0,0" VerticalAlignment="Top" Width="117" Click="btnGroundAppointment_Click"/>
+                    <Button x:Name="btnDeclineAppointment" Content="Absagen" HorizontalAlignment="Left" Margin="620,339,0,0" VerticalAlignment="Top" Width="117" Click="btnDeclineAppointment_Click"/>
+                    <Label Content="Selbst Termin anlegen:" HorizontalAlignment="Left" Margin="10,368,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Name:" HorizontalAlignment="Left" Margin="209,370,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbNameNewAppointment" HorizontalAlignment="Left" Height="23" Margin="299,372,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="174"/>
+                    <Label Content="Beschreibung:" HorizontalAlignment="Left" Margin="209,400,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbDescriptionNewAppointment" HorizontalAlignment="Left" Height="23" Margin="299,402,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="438"/>
+                    <Label Content="Startzeit:" HorizontalAlignment="Left" Margin="209,430,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Endzeit:" HorizontalAlignment="Left" Margin="209,460,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Standort:" HorizontalAlignment="Left" Margin="209,490,0,0" VerticalAlignment="Top"/>
+                    <xctk:DateTimePicker Name="dtpNewAppointmentStart" Width="200" Margin="300,432,616,83.6"/>
+                    <xctk:DateTimePicker x:Name="dtpNewAppointmentEnd" Width="200" Margin="300,462,616,52.6"/>
+                    <ComboBox x:Name="cbLocations" HorizontalAlignment="Left" Margin="299,492,0,0" VerticalAlignment="Top" Width="174"/>
+                    <Button x:Name="btnCreateAppointment" Content="Anlegen" HorizontalAlignment="Left" Margin="620,512,0,0" VerticalAlignment="Top" Width="117" Click="btnCreateAppointment_Click"/>
+                    <Label Content="Zusagen der Mitglieder:" HorizontalAlignment="Left" Margin="778,180,0,0" VerticalAlignment="Top"/>
+                    <ListView x:Name="lvMusicianAnswers" HorizontalAlignment="Left" Height="121" Margin="777,213,0,0" VerticalAlignment="Top" Width="309">
+                        <ListView.View>
+                            <GridView>
+                                <GridView.Columns>
+                                    <GridViewColumn Width="209" Header="Username" DisplayMemberBinding="{Binding Key}" />
+                                    <GridViewColumn Width="100" Header="Akzeptiert" DisplayMemberBinding="{Binding Value}" />
+                                </GridView.Columns>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Probenverwaltung">
+                <Grid Background="#FFEAF9FF">
+                    <Label x:Name="lblNewRehearsalRequest" Content="Neue Probenanfrage erstellen:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <xctk:DateTimePicker Name="dtpNewReharsalStart" Width="200" Height="24" Margin="351,13,307.4,504.6"/>
+                    <Label x:Name="lblNewRehearsalStartTime" Content="Früheste Zeit:" HorizontalAlignment="Left" Margin="224,11,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="lblNewRehearsalEndTime" Content="Späteste Zeit:" HorizontalAlignment="Left" Margin="224,43,0,0" VerticalAlignment="Top"/>
+                    <xctk:DateTimePicker x:Name="dtpNewReharsalEnd" Width="200" Height="24" Margin="351,45,307.4,472.6"/>
+                    <Label x:Name="lblNewRehearsalDuration" Content="Dauer in Stunden:" HorizontalAlignment="Left" Margin="224,75,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbNewRehearsalDuration" HorizontalAlignment="Left" Height="23" Margin="351,77,0,0" TextWrapping="Wrap" Text="3.5" VerticalAlignment="Top" Width="42"/>
+                    <Button x:Name="btnCreateNewRehearsal" Content="Neue Probeanfrage erstellen" HorizontalAlignment="Left" Margin="231,120,0,0" VerticalAlignment="Top" Width="162" Click="btnCreateNewRehearsal_Click"/>
+                    <Label x:Name="lblCurrentRehearsalRequests" Content="Aktuelle Probeanfragen:" HorizontalAlignment="Left" Margin="10,161,0,0" VerticalAlignment="Top"/>
+                    <Border Margin="224,161,0,0" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top" Height="121" Width="535" BorderBrush="Black">
+                        <DataGrid x:Name="dgRehearsalRequests" IsReadOnly="True" CanUserAddRows="False" SelectionChanged="dgRehearsalRequests_SelectionChanged">
+                        </DataGrid>
+                    </Border>
+                    <Button x:Name="btnRemoveRehearsalRequest" Content="Anfrage löschen" HorizontalAlignment="Left" Margin="647,295,0,0" VerticalAlignment="Top" Width="112" Click="btnRemoveRehearsalRequest_Click"/>
+                    <Button x:Name="btnAcceptRehearsalRequest" Content="Anfrage fixieren" HorizontalAlignment="Left" Margin="968,512,0,0" VerticalAlignment="Top" Width="112" Click="btnAcceptRehearsalRequest_Click"/>
+                    <Label Content="Mögliche Zeiten:" HorizontalAlignment="Left" Margin="10,346,0,0" VerticalAlignment="Top"/>
+                    <ListView x:Name="lvSuggestedTimesRehearsalRequest" HorizontalAlignment="Left" Height="148" Margin="132,348,0,0" VerticalAlignment="Top" Width="308"/>
+                    <Label Content="Probedaten fixieren:" HorizontalAlignment="Left" Margin="449,350,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Name:" HorizontalAlignment="Left" Margin="565,370,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbNameFixRehearsal" HorizontalAlignment="Left" Height="23" Margin="655,372,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="174"/>
+                    <Label Content="Beschreibung:" HorizontalAlignment="Left" Margin="565,400,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbDescriptionFixRehearsal" HorizontalAlignment="Left" Height="23" Margin="655,402,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="438"/>
+                    <Label Content="Startzeit:" HorizontalAlignment="Left" Margin="565,430,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Standort:" HorizontalAlignment="Left" Margin="565,460,0,0" VerticalAlignment="Top"/>
+                    <xctk:DateTimePicker Name="dtpFixRehearsalStart" Width="200" Margin="655,430,261,85.6"/>
+                    <ComboBox x:Name="cbLocationsFixRehearsal" HorizontalAlignment="Left" Margin="655,462,0,0" VerticalAlignment="Top" Width="174"/>
+                    <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="2" Margin="10,323,0,0" VerticalAlignment="Top" Width="1070">
+                        <Border.Effect>
+                            <BlurEffect/>
+                        </Border.Effect>
+                    </Border>
                 </Grid>
             </TabItem>
             <TabItem Header="Auswertungen">
-                <Grid Background="#FFEAF9FF"/>
+                <Grid Background="#FFEAF9FF">
+                    <Label x:Name="label" Content="War nicht in diesem Meilenstein enthalten (Kilometergeld)" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Datenverwaltung">
+                <Grid Background="#FFEAF9FF">
+                    <Label Content="Kosten pro Stunde der Band:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="tbBandCostsPerHour" HorizontalAlignment="Left" Height="23" Margin="188,12,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="43"/>
+                    <Button x:Name="btnUpdateBandData" Content="Daten updaten" HorizontalAlignment="Left" Margin="138,104,0,0" VerticalAlignment="Top" Width="93" Click="btnUpdateBandData_Click"/>
+                </Grid>
             </TabItem>
         </TabControl>
+        <Label x:Name="lblError" Content="" HorizontalAlignment="Left" Margin="25,639,0,0" VerticalAlignment="Top" Width="864" Foreground="#FFA20E0E" FontWeight="Bold"/>
 
     </Grid>
 </Window>

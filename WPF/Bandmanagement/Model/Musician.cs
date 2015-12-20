@@ -22,12 +22,14 @@ namespace Bandmanagement.Model
 
         public Location Habitation { get; set; }
 
+        public List<AvailableTime> AvailableTimes { get; set; }
+
         public List<Instrument> Skills { get; set; }  //TODO: instead of table instrumentSkills; correct collection?
 
 
         public Musician()
         {
-            
+            this.AvailableTimes = new List<AvailableTime>();
         }
 
         public Musician (int id, String username, String password, String firstName, String lastName)
@@ -39,8 +41,9 @@ namespace Bandmanagement.Model
             this.LastName = lastName;
 
             this.Birthdate = null;
-            this.Habitation = null;
+            this.Habitation = new Location();
             this.Skills = null;
+            this.AvailableTimes = new List<AvailableTime>();
         }
 
         public Boolean IsDataCorrect()

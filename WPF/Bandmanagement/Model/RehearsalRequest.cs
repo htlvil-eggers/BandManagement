@@ -10,8 +10,10 @@ namespace Bandmanagement.Model
     {
         public int Id { get; set; }
 
-        public Band Band { get; set; }
+        public DateTime StartTime { get; set; }
 
-        //TODO: to be continued....
+        public DateTime EndTime { get; set; }
+
+        public Double Duration { get; set; }
     }
 }

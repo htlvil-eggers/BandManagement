@@ -13,5 +13,20 @@ namespace Bandmanagement.Model
         public String Name { get; set; }
 
         //TODO: shape sdo_geometry
+
+        public Location()
+        {
+        }
+
+        public Location (int _Id, String _Name)
+        {
+            Id = _Id;
+            Name = _Name;
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

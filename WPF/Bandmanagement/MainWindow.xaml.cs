@@ -67,7 +67,7 @@ namespace Bandmanagement
 
 
                 OleDbCommand cmdSelectData = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdSelectData.CommandText = @"select b.id as bId, mus.id as musId, mus.first_name as musFirstName, mus.last_name as musLastName 
+                cmdSelectData.CommandText = @"select b.id as bId, b.costs_per_hour as bCosts, mus.id as musId, mus.first_name as musFirstName, mus.last_name as musLastName 
                                               from Musicians mus join Bands b on mus.id = b.leader_id where b.name = ? and mus.username = ? and mus.password = ?";
                 cmdSelectData.Parameters.AddWithValue("bandname", insertedBand.Name);
                 cmdSelectData.Parameters.AddWithValue("username", insertedMusician.Username);
@@ -80,11 +80,16 @@ namespace Bandmanagement
                     insertedMusician.Id = Int32.Parse(reader["musId"].ToString());
                     insertedMusician.FirstName = reader["musFirstName"].ToString();
                     insertedMusician.LastName = reader["musLastName"].ToString();
+
+                    if (reader["bCosts"].ToString().Length > 0)
+                    {
+                        insertedBand.CostsPerHour = Int32.Parse(reader["bCosts"].ToString());
+                    }
                 }
 
                 if (insertedMusician.IsDataCorrect() == true)  //if data is correct: log in succeeded
                 {
-                    BandmemberManagement managementWindow = new BandmemberManagement(insertedBand);
+                    BandmemberManagement managementWindow = new BandmemberManagement(this.dbOra, insertedBand);
                     managementWindow.Show();
                 }
                 else
@@ -162,7 +167,10 @@ namespace Bandmanagement
                     transInsertBand.Commit();
                     this.lblError.Content = "Band erstellt!";
 
-                    BandmemberManagement managementWindow = new BandmemberManagement(insertedBand);
+                    //set insertedBand id
+                    insertedBand.Id = selectIdFromBandName(insertedBand.Name);
+
+                    BandmemberManagement managementWindow = new BandmemberManagement(this.dbOra, insertedBand);
                     managementWindow.Show();
                 }
                 catch (Exception)
@@ -180,6 +188,23 @@ namespace Bandmanagement
             }
         }
 
+        private int selectIdFromBandName(String name)
+        {
+            int retId = -1;
+
+            OleDbCommand cmdSelectMusicianData = dbOra.getMyOleDbConnection().CreateCommand();
+            cmdSelectMusicianData.CommandText = "select id from bands where name = ?";
+            cmdSelectMusicianData.Parameters.AddWithValue("name", name);
+
+            OleDbDataReader reader = cmdSelectMusicianData.ExecuteReader(); //get password if musician already exists
+            while (reader.Read())
+            {
+                retId = Int32.Parse(reader["id"].ToString());
+            }
+            reader.Close();
+
+            return retId;
+        }
 
         private void printError(String error)
         {

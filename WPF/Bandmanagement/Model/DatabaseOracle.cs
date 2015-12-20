@@ -18,7 +18,7 @@ namespace Bandmanagement.Model
             try
             {
                 //ip extern:	212.152.179.117  ---  ip intern:	192.168.128.151
-                String connectionString = "Provider=OraOLEDB.Oracle; Data Source=192.168.128.151/ora11g; User Id=d5bhifs25;Password=edelBlech;OLEDB.NET=True;";
+                String connectionString = "Provider=OraOLEDB.Oracle; Data Source=212.152.179.117/ora11g; User Id=d5bhifs25;Password=edelBlech;OLEDB.NET=True;";
 
                 myOleDbConnection = new OleDbConnection(connectionString);
                 myOleDbConnection.Open();

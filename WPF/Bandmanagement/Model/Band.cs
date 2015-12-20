@@ -16,11 +16,31 @@ namespace Bandmanagement.Model
 
         public int CostsPerHour { get; set; }
 
+        public List<Musician> Musicians { get; set; }
+
+        public List<AppearanceRequest> AppearanceRequests { get; set; }
+
+        public List<RehearsalRequest> RehearsalRequests { get; set; }
+
+        public List<Appointment> Appointments { get; set; }
+
+        public List<Musician> MusiciansWithLeader { get
+            {
+                List<Musician> retList = new List<Musician>();
+                retList.AddRange(this.Musicians);
+                retList.Add(this.Leader);
+
+                return retList;
+            }
+        }
 
 
         public Band()
         {
-
+            this.Musicians = new List<Musician>();
+            this.AppearanceRequests = new List<AppearanceRequest>();
+            this.Appointments = new List<Appointment>();
+            this.RehearsalRequests = new List<RehearsalRequest>();
         }
          
         public Band (int id, String name, Musician leader)
@@ -28,6 +48,10 @@ namespace Bandmanagement.Model
             this.Id = id;
             this.Name = name;
             this.Leader = leader;
+            this.Musicians = new List<Musician>();
+            this.AppearanceRequests = new List<AppearanceRequest>();
+            this.Appointments = new List<Appointment>();
+            this.RehearsalRequests = new List<RehearsalRequest>();
         }
 
         public Boolean IsDataCorrect()
