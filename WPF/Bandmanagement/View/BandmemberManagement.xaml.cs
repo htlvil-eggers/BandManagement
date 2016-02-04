@@ -733,6 +733,8 @@ namespace Bandmanagement.View
             rehReq.EndTime = rehReq.StartTime.AddHours(rehReq.Duration);
             Model.Location location = (Model.Location)this.cbLocationsFixRehearsal.SelectedItem;
             Appointment newAppointment = new Appointment(name, description, location, rehReq);
+            newAppointment.Grounded = 1;
+            //TODO: generate appointment_attendances!
 
             if (mustBeBetweenTime != null && newAppointment.StartTime >= mustBeBetweenTime.StartTime && newAppointment.EndTime <= mustBeBetweenTime.EndTime)
             {
@@ -761,12 +763,12 @@ namespace Bandmanagement.View
                 this.currentBand.Appointments.Add(newAppointment);
 
                 //remove 
-                OleDbCommand cmdDeleteRequest = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdDeleteRequest.CommandText = "delete from rehearsal_requests where id = ?";
-                cmdDeleteRequest.Parameters.AddWithValue("rehReqId", rehReq.Id);
-                cmdDeleteRequest.ExecuteNonQuery();
+                //OleDbCommand cmdDeleteRequest = dbOra.getMyOleDbConnection().CreateCommand();
+                //cmdDeleteRequest.CommandText = "delete from rehearsal_requests where id = ?";
+                //cmdDeleteRequest.Parameters.AddWithValue("rehReqId", rehReq.Id);
+                //cmdDeleteRequest.ExecuteNonQuery();
 
-                this.currentBand.RehearsalRequests.Remove(rehReq);
+               // this.currentBand.RehearsalRequests.Remove(rehReq);
 
                 this.dbOra.Close();
                 this.dgAppointments.Items.Refresh();
