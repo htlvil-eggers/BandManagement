@@ -1,2 +1,8 @@
 Schiene 1: Egger
 Schiene 2: Delfser
+
+Schiene 1 (Java): 
+Anpassung der Java- an die C#-Objekte, um die Kommunikation über Webservices zu ermöglichen.
+
+Schiene 2 (C#):
+Implementierung der .jsp-Seite für Anfragen an die Band.
