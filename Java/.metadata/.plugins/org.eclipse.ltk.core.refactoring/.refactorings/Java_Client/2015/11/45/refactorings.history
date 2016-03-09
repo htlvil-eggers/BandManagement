@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Move element &apos;OracleDatabaseManager.java&apos; to &apos;Java_Client/src/pkgModel&apos;&#x0A;- Original project: &apos;Java_Client&apos;&#x0A;- Destination element: &apos;Java_Client/src/pkgModel&apos;&#x0A;- Original element: &apos;pkgMain.OracleDatabaseManager.java&apos;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="/src&lt;pkgModel" element1="/src&lt;pkgMain{OracleDatabaseManager.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" patterns="*" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1446407864505" units="1" version="1.0"/>
-</session>

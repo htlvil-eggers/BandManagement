@@ -26,17 +26,15 @@ import javafx.collections.FXCollections;
 
 import netscape.javascript.JSObject;
 
-import pkgModel.OracleDatabaseManager;
 import pkgModel.RehearsalRequest;
-import pkgModel.Appearance;
 import pkgModel.Appointment;
 import pkgModel.Instrument;
 import pkgModel.Location;
 import pkgModel.Musician;
 
 public class MainController {
-	private OracleDatabaseManager databaseManager;
 	private String username;
+	private String password;
 	private String bandname;
 	
 	@FXML
@@ -51,7 +49,7 @@ public class MainController {
     @FXML
     private ComboBox<Location> cboxHabitation;
     @FXML
-    private ListView<Appearance> lstAppearances;
+    private ListView<Appointment> lstAppearances;
     @FXML
     private PasswordField pwdPassword;
     @FXML
@@ -83,8 +81,8 @@ public class MainController {
     
 	@FXML
 	private void initialize() {
-		databaseManager = (OracleDatabaseManager) resources.getObject ("databaseManager");
 		username = (String) resources.getObject("username");
+		password = (String) resources.getObject("password");
 		bandname = (String) resources.getObject("bandname");
 		
 		configureComponents();
@@ -126,8 +124,8 @@ public class MainController {
 	}
 	
 	private void configureComponentsAppearanceRequestsTab() {
-		lstAppearances.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Appearance>() {
-			public void changed (ObservableValue <? extends Appearance> observable, Appearance oldValue, Appearance newValue) {
+		lstAppearances.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Appointment>() {
+			public void changed (ObservableValue <? extends Appointment> observable, Appointment oldValue, Appointment newValue) {
 				if (newValue != null) {
 					updateTextareaFromAppointment (newValue, txtareaDetail);
 				}
@@ -168,14 +166,8 @@ public class MainController {
 		lstInstruments.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 	}
 
-	private void initializeComponentsAppearanceRequestsTab() {
-		try {
-			lstAppearances.setItems(FXCollections.observableArrayList(databaseManager.getUnansweredAppearanceRequests(username, bandname)));
-		} catch (SQLException e) {
-			printAlertMessage(e.getMessage());
-			
-			e.printStackTrace();
-		}
+	private void initializeComponentsAppearanceRequestsTab() throws SQLException {
+		lstAppearances.setItems(FXCollections.observableArrayList(/*databaseManager.getUnansweredAppearanceRequests(username, bandname)*/));
 	}
 	
 	private void updateTextareaFromAppointment (Appointment appointment, TextArea textArea) {
@@ -195,17 +187,17 @@ public class MainController {
 	private void initializeComponentsRehearsalRequestsTab() throws SQLException {
 		this.wviewCalendar.getEngine().load(Thread.currentThread().getContextClassLoader().getResource("pkgResources/Site.html").toExternalForm());
 	
-		lstRehearsalRequests.setItems(FXCollections.observableArrayList(databaseManager.getRehearsalRequests (bandname)));
+		lstRehearsalRequests.setItems(FXCollections.observableArrayList(/*databaseManager.getRehearsalRequests (bandname*/));
 	
 		txtFrom.setText("00:00");
 		txtTo.setText("24:00");
 	}
     
     private void initializeComponentsPersonalDataTab() throws SQLException {
-    	Musician musician = databaseManager.getMusician (username);
+    	Musician musician = /*databaseManager.getMusician (username)*/null;
     	
-		cboxHabitation.setItems (FXCollections.observableArrayList (databaseManager.getLocations()));
-		lstInstruments.setItems (FXCollections.observableArrayList(databaseManager.getInstruments()));
+		cboxHabitation.setItems (FXCollections.observableArrayList (/*databaseManager.getLocations()*/));
+		lstInstruments.setItems (FXCollections.observableArrayList(/*databaseManager.getInstruments()*/));
 		
 		pwdPassword.setText(musician.getPassword());
 		txtFirstName.setText(musician.getFirstName());
@@ -216,54 +208,40 @@ public class MainController {
 			dateBirthdate.setValue(((java.sql.Date)musician.getBirthdate()).toLocalDate());
 		}
 		
-		for (Instrument instrument : musician.getInstruments()) {
+		for (Instrument instrument : musician.getSkills()) {
 			lstInstruments.getSelectionModel().select(instrument);
 		}
     }
     
-	private void initializeComponentsOtherAppointmentRequestsTab() {
-		try {
-			lstAppointments.setItems(FXCollections.observableArrayList(databaseManager.getUnansweredAppointmentRequests(username, bandname)));
-		} catch (SQLException e) {
-			printAlertMessage(e.getMessage());
-			
-			e.printStackTrace();
-		}
+	private void initializeComponentsOtherAppointmentRequestsTab() throws SQLException {
+		lstAppointments.setItems(FXCollections.observableArrayList(/*databaseManager.getUnansweredAppointmentRequests(username, bandname)*/));
 	}
 
     @FXML
-    void btnSave_onAction() {
+    void btnSave_onAction() throws SQLException {
     	String password = pwdPassword.getText();
     	String firstName = txtFirstName.getText();
     	String lastName = txtLastName.getText();
     	Date birthdate = null;
     	Location habitation = cboxHabitation.getValue();
-    	Vector<Instrument> instruments = new Vector<Instrument> (Arrays.asList (lstInstruments.getSelectionModel().getSelectedItems().toArray(new Instrument[0])));
+    	Vector<Instrument> skills = new Vector<Instrument> (Arrays.asList (lstInstruments.getSelectionModel().getSelectedItems().toArray(new Instrument[0])));
     	
     	if (dateBirthdate.getValue() != null) {
     		birthdate = Date.from(dateBirthdate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
     	}
     	
-    	Musician musician = new Musician (username, password, firstName, lastName, instruments, habitation, birthdate);
-    	
-    	try {
-			databaseManager.updateMusician (musician);
-		} catch (SQLException e) {
-			printAlertMessage(e.getMessage());
-		}
+    	Musician musician = new Musician (-1, username, password, firstName, lastName, skills, habitation, birthdate, null);
+    
+    	/*databaseManager.updateMusician (musician);*/
     }
 
     @FXML
-    void btnAccept_onAction() {
-    	Appearance selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
+    void btnAccept_onAction() throws SQLException {
+    	Appointment selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
     	
     	if (selectedAppearance != null) {
-    		try {
-				databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, true);
-				lstAppearances.getItems().remove(selectedAppearance);
-    		} catch (SQLException e) {
-				printAlertMessage(e.getMessage());
-			}
+    		/*databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, true);*/
+			lstAppearances.getItems().remove(selectedAppearance);
     	}
     	else {
 			printAlertMessage("No appearance selected!");
@@ -271,16 +249,12 @@ public class MainController {
     }
 
     @FXML
-    void btnDecline_onAction() {
-    	Appearance selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
+    void btnDecline_onAction() throws SQLException {
+    	Appointment selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
     	
     	if (selectedAppearance != null) {
-    		try {
-				databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, false);
-				lstAppearances.getItems().remove(selectedAppearance);
-			} catch (SQLException e) {
-				printAlertMessage(e.getMessage());
-			}
+    		/*databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, false);*/
+			lstAppearances.getItems().remove(selectedAppearance);
     	}
     	else {
 			printAlertMessage("No appearance selected!");
@@ -288,16 +262,12 @@ public class MainController {
     }
     
     @FXML
-    private void btnAcceptAppointment_onAction() {
+    private void btnAcceptAppointment_onAction() throws SQLException {
     	Appointment selectedAppointment = lstAppointments.getSelectionModel().getSelectedItem();
     	
     	if (selectedAppointment != null) {
-    		try {
-				databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, true);
-				lstAppointments.getItems().remove(selectedAppointment);
-    		} catch (SQLException e) {
-				printAlertMessage(e.getMessage());
-			}
+    		/*databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, true);*/
+			lstAppointments.getItems().remove(selectedAppointment);
     	}
     	else {
 			printAlertMessage("No appointment selected!");
@@ -305,16 +275,12 @@ public class MainController {
     }
     
     @FXML
-    private void btnDeclineAppointment_onAction() {
+    private void btnDeclineAppointment_onAction() throws SQLException {
     	Appointment selectedAppointment = lstAppointments.getSelectionModel().getSelectedItem();
     	
     	if (selectedAppointment != null) {
-    		try {
-				databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, false);
-				lstAppointments.getItems().remove(selectedAppointment);
-			} catch (SQLException e) {
-				printAlertMessage(e.getMessage());
-			}
+    		/*databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, false);*/
+			lstAppointments.getItems().remove(selectedAppointment);
     	}
     	else {
 			printAlertMessage("No appointment selected!");
@@ -322,7 +288,7 @@ public class MainController {
     }
     
     @FXML
-    private void btnSavePossibleTimes_onAction() {
+    private void btnSavePossibleTimes_onAction() throws SQLException {
     	if (lstRehearsalRequests.getSelectionModel().getSelectedItem() != null) {
 	    	JSObject jsObject = (JSObject)wviewCalendar.getEngine().executeScript("getSelectedDates();");
 	    	Vector<Date> selectedDates = new Vector<Date>();
@@ -338,13 +304,7 @@ public class MainController {
 	    		try {
 	    			dates = generateAvailableTimesFromDateAndTimeFields(date);
 	    			
-	        		try {
-	    				databaseManager.addAvailableTimes (bandname, username, dates[0], dates[1]);
-	    			} catch (SQLException e) {
-	    				printAlertMessage(e.getMessage());
-	    				
-	    				e.printStackTrace();
-	    			}
+	    			/*databaseManager.addAvailableTimes (bandname, username, dates[0], dates[1]);*/
 	    		}
 	    		catch (Exception e) {
 	    			printAlertMessage("Please input both times in correct format: (hh:mm)");

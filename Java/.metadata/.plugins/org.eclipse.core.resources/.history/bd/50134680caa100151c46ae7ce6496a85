@@ -1,9 +1,0 @@
-package pkgModel;
-
-import java.util.Date;
-
-public class RehearsalRequest {
-	private Date startTime;
-	private Date endTime;
-	private double duration;
-}

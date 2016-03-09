@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Android_Client</string>
+
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="bandName">Band Name</string>
+    <string name="login">Login</string>
+
+    <string name="credentialsNotCorrect">Sorry but the credentials are not correct!</string>
+</resources>

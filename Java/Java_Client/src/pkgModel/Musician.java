@@ -4,27 +4,36 @@ import java.util.Date;
 import java.util.Vector;
 
 public class Musician {
+	private int id;
 	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;
-	private Vector<Instrument> instruments = new Vector<Instrument>();
+	private Vector<Instrument> skills = new Vector<Instrument>();
 	private Location habitation;
 	private Date birthdate;
+	private Vector<AvailableTime> availableTimes = new Vector<AvailableTime>();
 	
-	public Musician(String username, String password, String firstName, String lastName, Vector<Instrument> instruments,
-			Location habitation, Date birthdate) {
+	public Musician(int id, String username, String password, String firstName, String lastName,
+			Vector<Instrument> skills, Location habitation, Date birthdate, Vector<AvailableTime> availableTimes) {
+		super();
+		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.instruments = instruments;
+		this.skills = skills;
 		this.habitation = habitation;
 		this.birthdate = birthdate;
+		this.availableTimes = availableTimes;
 	}
 
-	public Musician() {
-		
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -59,12 +68,12 @@ public class Musician {
 		this.lastName = lastName;
 	}
 
-	public Vector<Instrument> getInstruments() {
-		return instruments;
+	public Vector<Instrument> getSkills() {
+		return skills;
 	}
 
-	public void setInstruments(Vector<Instrument> instruments) {
-		this.instruments = instruments;
+	public void setSkills(Vector<Instrument> skills) {
+		this.skills = skills;
 	}
 
 	public Location getHabitation() {
@@ -81,5 +90,13 @@ public class Musician {
 
 	public void setBirthdate(Date birthdate) {
 		this.birthdate = birthdate;
+	}
+
+	public Vector<AvailableTime> getAvailableTimes() {
+		return availableTimes;
+	}
+
+	public void setAvailableTimes(Vector<AvailableTime> availableTimes) {
+		this.availableTimes = availableTimes;
 	}
 }

@@ -4,14 +4,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class RehearsalRequest {
+	private int id;
 	private Date startTime;
 	private Date endTime;
 	private double duration;
 	
-	public RehearsalRequest(Date startTime, Date endTime, double duration) {
+	public RehearsalRequest(int id, Date startTime, Date endTime, double duration) {
+		this.id = id;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.duration = duration;
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Date getStartTime() {
@@ -37,7 +47,7 @@ public class RehearsalRequest {
 	public void setDuration(double duration) {
 		this.duration = duration;
 	}
-	
+
 	@Override
 	public String toString() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
