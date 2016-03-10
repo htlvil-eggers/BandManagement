@@ -1,1 +1,8 @@
-asdf
+Schiene 1: Egger
+Schiene 2: Delfser
+
+Schiene 1 (Java): 
+Android-App wurde implementiert.
+
+Schiene 2 (C#):
+Webservices wurden implementiert.
