@@ -19,18 +19,13 @@ END;
 
 
 CREATE OR REPLACE TRIGGER MUSICIANS_BEFOREINSERT 
-BEFORE INSERT OR UPDATE ON MUSICIANS 
+BEFORE INSERT ON MUSICIANS 
 FOR EACH ROW 
 DECLARE
   maxId integer;  
 BEGIN
-  if :old.id <> null then
-    :new.id := :old.id; 
-    
-  else 
-    select nvl (max(id), -1) into maxId from musicians;      
-    :new.id := maxId + 1;   
-  end if;
+  select nvl (max(id), -1) into maxId from musicians;
+  :new.id := maxId + 1;   
 END;
 
 
@@ -71,4 +66,15 @@ BEFORE UPDATE ON LOCATIONS
 FOR EACH ROW 
 BEGIN
   :new.id := :old.id;
+END;
+
+
+create or replace TRIGGER AVTIMES_BEFOREINSERT 
+BEFORE INSERT ON AVAILABLE_TIMES
+FOR EACH ROW 
+DECLARE
+  maxId integer;  
+BEGIN
+  select nvl (max(id), -1) into maxId from available_times;      
+  :new.id := maxId + 1;   
 END;

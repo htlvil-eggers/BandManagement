@@ -1,0 +1,40 @@
+package pkgModel;
+
+import java.net.URI;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+
+public class WebserviceManager {
+	private static WebResource service;
+
+	public WebserviceManager () {
+		
+	}
+	
+	private static void initializeService(String url) {
+		ClientConfig clientConfig = new DefaultClientConfig();
+		Client client = Client.create (clientConfig);
+		
+		service = client.resource(url);
+	}
+
+	
+	public static boolean checkCredentials(String username, String password, String bandname) {
+		initializeService(getBaseURI().toString());
+		boolean correct = false;
+		
+		service.path("rest").path("login").accept(MediaType.APPLICATION_JSON).get(String.class);
+		
+		return correct;
+	}
+	
+    private static URI getBaseURI() {
+	    return UriBuilder.fromUri("http://localhost:8081/BandManagement_Webserver").build();
+    }
+}

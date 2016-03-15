@@ -1,0 +1,353 @@
+package pkgController;
+
+import java.util.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.ResourceBundle;
+import java.util.Vector;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.web.WebView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+
+import netscape.javascript.JSObject;
+
+import pkgModel.RehearsalRequest;
+import pkgModel.Appointment;
+import pkgModel.Instrument;
+import pkgModel.Location;
+import pkgModel.Musician;
+
+public class MainController {
+	private String username;
+	private String password;
+	private String bandname;
+	
+	@FXML
+	private ResourceBundle resources;
+	
+    @FXML
+    private Button btnAccept;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private DatePicker dateBirthdate;
+    @FXML
+    private ComboBox<Location> cboxHabitation;
+    @FXML
+    private ListView<Appointment> lstAppearances;
+    @FXML
+    private PasswordField pwdPassword;
+    @FXML
+    private TextArea txtareaDetail;
+    @FXML
+    private ListView<RehearsalRequest> lstRehearsalRequests;
+    @FXML
+    private TextField txtLastName;
+    @FXML
+    private ListView<Instrument> lstInstruments;
+    @FXML
+    private TextField txtFirstName;
+    @FXML
+    private Button btnDecline;
+    @FXML
+    private WebView wviewCalendar;
+    @FXML
+    private Button btnAcceptAppointment;
+    @FXML
+    private Button btnDeclineAppointment;
+    @FXML
+    private ListView<Appointment> lstAppointments;
+    @FXML
+    private TextArea txtareaAppointmentDetail;
+    @FXML
+    private TextField txtFrom;
+    @FXML
+    private TextField txtTo;
+    
+	@FXML
+	private void initialize() {
+		username = (String) resources.getObject("username");
+		password = (String) resources.getObject("password");
+		bandname = (String) resources.getObject("bandname");
+		
+		configureComponents();
+		
+		try {
+			initializeComponents();
+		} catch (SQLException e) {
+			printAlertMessage(e.getMessage());
+			
+			e.printStackTrace();
+		}
+	}
+	
+	private void initializeComponents() throws SQLException {
+		initializeComponentsPersonalDataTab();
+		initializeComponentsRehearsalRequestsTab();
+		initializeComponentsAppearanceRequestsTab();
+		initializeComponentsOtherAppointmentRequestsTab();
+	}
+	
+	private void configureComponents() {
+		configureComponentsPersonalDataTab();
+		configureComponentsRehearsalRequestsTab();
+		configureComponentsAppearanceRequestsTab();
+		configureComponentsOtherAppointmentRequestsTab();
+	}
+	
+	private void configureComponentsOtherAppointmentRequestsTab() {
+		lstAppointments.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Appointment>() {
+			public void changed (ObservableValue <? extends Appointment> observable, Appointment oldValue, Appointment newValue) {
+				if (newValue != null) {
+					updateTextareaFromAppointment (newValue, txtareaAppointmentDetail);
+				}
+				else {
+					txtareaAppointmentDetail.setText("");
+				}
+			}
+		});
+	}
+	
+	private void configureComponentsAppearanceRequestsTab() {
+		lstAppearances.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<Appointment>() {
+			public void changed (ObservableValue <? extends Appointment> observable, Appointment oldValue, Appointment newValue) {
+				if (newValue != null) {
+					updateTextareaFromAppointment (newValue, txtareaDetail);
+				}
+				else {
+					txtareaDetail.setText("");
+				}
+			}
+		});
+	}
+
+	private void configureComponentsRehearsalRequestsTab() {
+		lstRehearsalRequests.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<RehearsalRequest>() {
+			public void changed (ObservableValue <? extends RehearsalRequest> observable, RehearsalRequest oldValue, RehearsalRequest newValue) {
+				if (newValue != null) {
+					updateCalendarFromRehearsalRequest (newValue);
+				}
+				else {
+					wviewCalendar.getEngine().executeScript("removeCalendar();");
+				}
+			}
+
+			private void updateCalendarFromRehearsalRequest(RehearsalRequest rehearsalRequest) {
+				String dateFrom, dateTo;
+				Date startTime = rehearsalRequest.getStartTime(), endTime = rehearsalRequest.getEndTime();
+				Calendar calendar = Calendar.getInstance();
+				
+				calendar.setTime(startTime);
+				dateFrom = "new Date (" + calendar.get(Calendar.YEAR) + "," + calendar.get(Calendar.MONTH) + "," + calendar.get(Calendar.DAY_OF_MONTH) + "," + calendar.get(Calendar.HOUR_OF_DAY) + "," + calendar.get(Calendar.MINUTE) + "," + calendar.get(Calendar.SECOND) + "," + calendar.get(Calendar.MILLISECOND) + ")";
+				calendar.setTime(endTime);
+				dateTo = "new Date (" + calendar.get(Calendar.YEAR) + "," + calendar.get(Calendar.MONTH) + "," + calendar.get(Calendar.DAY_OF_MONTH) + "," + calendar.get(Calendar.HOUR_OF_DAY) + "," + calendar.get(Calendar.MINUTE) + "," + calendar.get(Calendar.SECOND) + "," + calendar.get(Calendar.MILLISECOND) + ")";
+			
+				wviewCalendar.getEngine().executeScript("generateCalendar(" + dateFrom + "," + dateTo + ");");
+			}
+		});
+	}
+
+	private void configureComponentsPersonalDataTab() {
+		lstInstruments.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+	}
+
+	private void initializeComponentsAppearanceRequestsTab() throws SQLException {
+		lstAppearances.setItems(FXCollections.observableArrayList(/*databaseManager.getUnansweredAppearanceRequests(username, bandname)*/));
+	}
+	
+	private void updateTextareaFromAppointment (Appointment appointment, TextArea textArea) {
+		String newLine = System.getProperty("line.separator");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+		String text = "";
+		
+		text += "Titel: " + appointment.getName() + newLine + newLine;
+		text += "Start time: " + formatter.format(appointment.getStartTime()) + newLine;
+		text += "End time: " + formatter.format(appointment.getEndTime()) + newLine + newLine;
+		text += "Location: " + appointment.getLocation().getName() + newLine + newLine;
+		text += "Description: " + appointment.getDescription();
+	
+		textArea.setText(text);
+	}
+	
+	private void initializeComponentsRehearsalRequestsTab() throws SQLException {
+		this.wviewCalendar.getEngine().load(Thread.currentThread().getContextClassLoader().getResource("pkgResources/Site.html").toExternalForm());
+	
+		lstRehearsalRequests.setItems(FXCollections.observableArrayList(/*databaseManager.getRehearsalRequests (bandname*/));
+	
+		txtFrom.setText("00:00");
+		txtTo.setText("24:00");
+	}
+    
+    private void initializeComponentsPersonalDataTab() throws SQLException {
+    	Musician musician = WebserviceManager.getMusician(username);
+    	
+		cboxHabitation.setItems (FXCollections.observableArrayList (/*databaseManager.getLocations()*/));
+		lstInstruments.setItems (FXCollections.observableArrayList(/*databaseManager.getInstruments()*/));
+		
+		pwdPassword.setText(musician.getPassword());
+		txtFirstName.setText(musician.getFirstName());
+		txtLastName.setText(musician.getLastName());
+		cboxHabitation.setValue (musician.getHabitation());
+		
+		if (musician.getBirthdate() != null) {
+			dateBirthdate.setValue(((java.sql.Date)musician.getBirthdate()).toLocalDate());
+		}
+		
+		for (Instrument instrument : musician.getSkills()) {
+			lstInstruments.getSelectionModel().select(instrument);
+		}
+    }
+    
+	private void initializeComponentsOtherAppointmentRequestsTab() throws SQLException {
+		lstAppointments.setItems(FXCollections.observableArrayList(/*databaseManager.getUnansweredAppointmentRequests(username, bandname)*/));
+	}
+
+    @FXML
+    void btnSave_onAction() throws SQLException {
+    	String password = pwdPassword.getText();
+    	String firstName = txtFirstName.getText();
+    	String lastName = txtLastName.getText();
+    	Date birthdate = null;
+    	Location habitation = cboxHabitation.getValue();
+    	Vector<Instrument> skills = new Vector<Instrument> (Arrays.asList (lstInstruments.getSelectionModel().getSelectedItems().toArray(new Instrument[0])));
+    	
+    	if (dateBirthdate.getValue() != null) {
+    		birthdate = Date.from(dateBirthdate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    	}
+    	
+    	Musician musician = new Musician (-1, username, password, firstName, lastName, skills, habitation, birthdate, null);
+    
+    	/*databaseManager.updateMusician (musician);*/
+    }
+
+    @FXML
+    void btnAccept_onAction() throws SQLException {
+    	Appointment selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
+    	
+    	if (selectedAppearance != null) {
+    		/*databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, true);*/
+			lstAppearances.getItems().remove(selectedAppearance);
+    	}
+    	else {
+			printAlertMessage("No appearance selected!");
+    	}
+    }
+
+    @FXML
+    void btnDecline_onAction() throws SQLException {
+    	Appointment selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
+    	
+    	if (selectedAppearance != null) {
+    		/*databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, false);*/
+			lstAppearances.getItems().remove(selectedAppearance);
+    	}
+    	else {
+			printAlertMessage("No appearance selected!");
+    	}
+    }
+    
+    @FXML
+    private void btnAcceptAppointment_onAction() throws SQLException {
+    	Appointment selectedAppointment = lstAppointments.getSelectionModel().getSelectedItem();
+    	
+    	if (selectedAppointment != null) {
+    		/*databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, true);*/
+			lstAppointments.getItems().remove(selectedAppointment);
+    	}
+    	else {
+			printAlertMessage("No appointment selected!");
+    	}
+    }
+    
+    @FXML
+    private void btnDeclineAppointment_onAction() throws SQLException {
+    	Appointment selectedAppointment = lstAppointments.getSelectionModel().getSelectedItem();
+    	
+    	if (selectedAppointment != null) {
+    		/*databaseManager.answerAppointmentRequest (selectedAppointment, bandname, username, false);*/
+			lstAppointments.getItems().remove(selectedAppointment);
+    	}
+    	else {
+			printAlertMessage("No appointment selected!");
+    	}
+    }
+    
+    @FXML
+    private void btnSavePossibleTimes_onAction() throws SQLException {
+    	if (lstRehearsalRequests.getSelectionModel().getSelectedItem() != null) {
+	    	JSObject jsObject = (JSObject)wviewCalendar.getEngine().executeScript("getSelectedDates();");
+	    	Vector<Date> selectedDates = new Vector<Date>();
+	    	int i = 0;
+	    	
+	    	while (!jsObject.getSlot(i).equals("undefined")) {
+	    		selectedDates.add(new Date(((Double)((JSObject)jsObject.getSlot(i)).call("getTime")).longValue()));
+	    		i++;
+	    	}
+	    	
+	    	Date []dates;
+	    	for (Date date : selectedDates) {
+	    		try {
+	    			dates = generateAvailableTimesFromDateAndTimeFields(date);
+	    			
+	    			/*databaseManager.addAvailableTimes (bandname, username, dates[0], dates[1]);*/
+	    		}
+	    		catch (Exception e) {
+	    			printAlertMessage("Please input both times in correct format: (hh:mm)");
+	    		}
+	    	}
+    	}
+    	else {
+    		printAlertMessage("No rehearsal request selected!");
+    	}
+    }
+    
+    private Date[] generateAvailableTimesFromDateAndTimeFields (Date date) {
+    	Date []dates = new Date[2];
+    	Calendar calendar = Calendar.getInstance();
+    	int hours, minutes;
+    	String timeFrom = txtFrom.getText();
+    	String timeTo = txtTo.getText();
+    	String []timeData;
+    	
+    	calendar.setTime(date);
+    	timeData = timeFrom.split(":");
+    	hours = Integer.parseInt(timeData[0]);
+    	minutes = Integer.parseInt(timeData[1]);
+    	calendar.add(Calendar.HOUR_OF_DAY, hours);
+    	calendar.add(Calendar.MINUTE, minutes);
+    	dates[0] = calendar.getTime();
+    	
+    	calendar.setTime(date);
+    	timeData = timeTo.split(":");
+    	hours = Integer.parseInt(timeData[0]);
+    	minutes = Integer.parseInt(timeData[1]);
+    	calendar.add(Calendar.HOUR_OF_DAY, hours);
+    	calendar.add(Calendar.MINUTE, minutes);
+    	dates[1] = calendar.getTime();
+    	
+    	return dates;
+    }
+    
+    private void printAlertMessage (String message) {
+		Alert messageWindow = new Alert (Alert.AlertType.ERROR);
+		
+		messageWindow.setContentText(message);
+		
+		messageWindow.show();
+    }
+}

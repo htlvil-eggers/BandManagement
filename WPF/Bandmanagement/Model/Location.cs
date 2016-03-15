@@ -12,8 +12,6 @@ namespace Bandmanagement.Model
 
         public String Name { get; set; }
 
-        //TODO: shape sdo_geometry
-
         public Location()
         {
         }

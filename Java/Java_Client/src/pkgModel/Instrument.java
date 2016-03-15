@@ -1,8 +1,15 @@
 package pkgModel;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Instrument {
 	private String name;
 	private int id;
+	
+	public Instrument() {
+		
+	}
 	
 	public Instrument(String name, int id) {
 		this.name = name;

@@ -1,0 +1,9 @@
+package pkgModel;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class AvailableTimeWrapper {
+	private String bandname;
+	private String username;
+}

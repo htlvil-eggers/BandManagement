@@ -27,6 +27,7 @@ import javafx.collections.FXCollections;
 import netscape.javascript.JSObject;
 
 import pkgModel.RehearsalRequest;
+import pkgModel.WebserviceManager;
 import pkgModel.Appointment;
 import pkgModel.Instrument;
 import pkgModel.Location;
@@ -167,7 +168,7 @@ public class MainController {
 	}
 
 	private void initializeComponentsAppearanceRequestsTab() throws SQLException {
-		lstAppearances.setItems(FXCollections.observableArrayList(/*databaseManager.getUnansweredAppearanceRequests(username, bandname)*/));
+		lstAppearances.setItems(FXCollections.observableArrayList(WebserviceManager.getUnansweredAppearanceRequests(username, bandname, password)));
 	}
 	
 	private void updateTextareaFromAppointment (Appointment appointment, TextArea textArea) {
@@ -187,17 +188,17 @@ public class MainController {
 	private void initializeComponentsRehearsalRequestsTab() throws SQLException {
 		this.wviewCalendar.getEngine().load(Thread.currentThread().getContextClassLoader().getResource("pkgResources/Site.html").toExternalForm());
 	
-		lstRehearsalRequests.setItems(FXCollections.observableArrayList(/*databaseManager.getRehearsalRequests (bandname*/));
+		lstRehearsalRequests.setItems(FXCollections.observableArrayList(WebserviceManager.getRehearsalRequests(bandname)));
 	
 		txtFrom.setText("00:00");
 		txtTo.setText("24:00");
 	}
     
     private void initializeComponentsPersonalDataTab() throws SQLException {
-    	Musician musician = /*databaseManager.getMusician (username)*/null;
+    	Musician musician = WebserviceManager.getMusician(username, password);
     	
-		cboxHabitation.setItems (FXCollections.observableArrayList (/*databaseManager.getLocations()*/));
-		lstInstruments.setItems (FXCollections.observableArrayList(/*databaseManager.getInstruments()*/));
+		cboxHabitation.setItems (FXCollections.observableArrayList(WebserviceManager.getLocations()));
+		lstInstruments.setItems (FXCollections.observableArrayList(WebserviceManager.getInstruments()));
 		
 		pwdPassword.setText(musician.getPassword());
 		txtFirstName.setText(musician.getFirstName());
@@ -205,7 +206,7 @@ public class MainController {
 		cboxHabitation.setValue (musician.getHabitation());
 		
 		if (musician.getBirthdate() != null) {
-			dateBirthdate.setValue(((java.sql.Date)musician.getBirthdate()).toLocalDate());
+			dateBirthdate.setValue((new java.sql.Date(musician.getBirthdate().getTime())).toLocalDate());
 		}
 		
 		for (Instrument instrument : musician.getSkills()) {
@@ -232,7 +233,7 @@ public class MainController {
     	
     	Musician musician = new Musician (-1, username, password, firstName, lastName, skills, habitation, birthdate, null);
     
-    	/*databaseManager.updateMusician (musician);*/
+    	WebserviceManager.updateMusician (musician);
     }
 
     @FXML
@@ -240,7 +241,7 @@ public class MainController {
     	Appointment selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
     	
     	if (selectedAppearance != null) {
-    		/*databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, true);*/
+    		WebserviceManager.answerAppearanceRequest (selectedAppearance, bandname, username, password, true);
 			lstAppearances.getItems().remove(selectedAppearance);
     	}
     	else {
@@ -253,7 +254,7 @@ public class MainController {
     	Appointment selectedAppearance = lstAppearances.getSelectionModel().getSelectedItem();
     	
     	if (selectedAppearance != null) {
-    		/*databaseManager.answerAppearanceRequest (selectedAppearance, bandname, username, false);*/
+    		WebserviceManager.answerAppearanceRequest (selectedAppearance, bandname, username, password, false);
 			lstAppearances.getItems().remove(selectedAppearance);
     	}
     	else {
@@ -302,9 +303,8 @@ public class MainController {
 	    	Date []dates;
 	    	for (Date date : selectedDates) {
 	    		try {
-	    			dates = generateAvailableTimesFromDateAndTimeFields(date);
-	    			
-	    			/*databaseManager.addAvailableTimes (bandname, username, dates[0], dates[1]);*/
+	    			dates = generateAvailableTimesFromDateAndTimeFields(date);			
+	    			WebserviceManager.addAvailableTime(bandname, username, dates[0], dates[1]);
 	    		}
 	    		catch (Exception e) {
 	    			printAlertMessage("Please input both times in correct format: (hh:mm)");

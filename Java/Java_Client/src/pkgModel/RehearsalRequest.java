@@ -3,11 +3,18 @@ package pkgModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class RehearsalRequest {
 	private int id;
 	private Date startTime;
 	private Date endTime;
 	private double duration;
+	
+	public RehearsalRequest() {
+		
+	}
 	
 	public RehearsalRequest(int id, Date startTime, Date endTime, double duration) {
 		this.id = id;

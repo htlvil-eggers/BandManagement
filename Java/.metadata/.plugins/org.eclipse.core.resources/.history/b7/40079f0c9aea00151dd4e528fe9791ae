@@ -1,0 +1,7 @@
+package pkgModel;
+
+@XmlRootElement
+public class AvailableTimeWrapper {
+	private String bandname;
+	private String username;
+}

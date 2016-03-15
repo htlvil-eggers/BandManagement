@@ -1,0 +1,13 @@
+package pkgModel;
+
+import java.util.Date;
+
+public class AppearanceRequestWrapper {
+	private Appointment selectedAppointment;
+	private String bandname;
+	private String username;
+	private Boolean accepted;
+	
+	public AppearanceRequestWrapper() {
+	}
+}
