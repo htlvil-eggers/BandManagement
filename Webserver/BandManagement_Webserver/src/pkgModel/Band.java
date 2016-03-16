@@ -1,0 +1,98 @@
+package pkgModel;
+
+import java.util.Vector;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class Band {
+	private int id;
+	private String name;
+	private Musician leader;
+	private int costsPerHour;
+	private Vector<Musician> musicians;
+	private Vector<AppearanceRequest> appearanceRequests;
+	private Vector<RehearsalRequest> rehearsalRequests;
+	private Vector<Appointment> appointments;
+	
+	public Band() {
+	}
+
+	public Band(int id, String name, Musician leader, int costsPerHour, Vector<Musician> musicians,
+			Vector<AppearanceRequest> appearanceRequests, Vector<RehearsalRequest> rehearsalRequests,
+			Vector<Appointment> appointments) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.leader = leader;
+		this.costsPerHour = costsPerHour;
+		this.musicians = musicians;
+		this.appearanceRequests = appearanceRequests;
+		this.rehearsalRequests = rehearsalRequests;
+		this.appointments = appointments;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Musician getLeader() {
+		return leader;
+	}
+
+	public void setLeader(Musician leader) {
+		this.leader = leader;
+	}
+
+	public int getCostsPerHour() {
+		return costsPerHour;
+	}
+
+	public void setCostsPerHour(int costsPerHour) {
+		this.costsPerHour = costsPerHour;
+	}
+
+	public Vector<Musician> getMusicians() {
+		return musicians;
+	}
+
+	public void setMusicians(Vector<Musician> musicians) {
+		this.musicians = musicians;
+	}
+
+	public Vector<AppearanceRequest> getAppearanceRequests() {
+		return appearanceRequests;
+	}
+
+	public void setAppearanceRequests(Vector<AppearanceRequest> appearanceRequests) {
+		this.appearanceRequests = appearanceRequests;
+	}
+
+	public Vector<RehearsalRequest> getRehearsalRequests() {
+		return rehearsalRequests;
+	}
+
+	public void setRehearsalRequests(Vector<RehearsalRequest> rehearsalRequests) {
+		this.rehearsalRequests = rehearsalRequests;
+	}
+
+	public Vector<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public void setAppointments(Vector<Appointment> appointments) {
+		this.appointments = appointments;
+	}
+}

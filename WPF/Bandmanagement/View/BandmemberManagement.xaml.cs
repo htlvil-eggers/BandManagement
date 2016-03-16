@@ -23,27 +23,25 @@ namespace Bandmanagement.View
     /// </summary>
     public partial class BandmemberManagement : Window
     {
-        public Band currentBand;  //TODO: rehearsal request (probe zwischen 2 daten mit stundenanzahl)
-        public DatabaseOracle dbOra;
+        public Band currentBand;
 
-        public BandmemberManagement(DatabaseOracle connectedDb, Band signedInBand)
+        public BandmemberManagement(Band signedInBand)
         {
             InitializeComponent();
 
-            dbOra = connectedDb;
             currentBand = signedInBand;
 
             //set datagrids
-            this.currentBand.Musicians = selectMembersOfBand(currentBand);
+            this.currentBand.Musicians = WebserviceManager.GetMusiciansOfBand(currentBand.Name); 
             this.dgCurrentBandmembers.ItemsSource = this.currentBand.Musicians;
 
-            this.currentBand.AppearanceRequests = selectAppearanceRequestOfBand(currentBand);
+            this.currentBand.AppearanceRequests = WebserviceManager.GetAppearanceRequestsOfBand(currentBand.Name);  
             this.dgReceivedAppearanceRequests.ItemsSource = this.currentBand.AppearanceRequests;
 
-            this.currentBand.Appointments = selectAppointmentsOfBand(currentBand);
+            this.currentBand.Appointments = WebserviceManager.GetAppointmentsOfBand(currentBand.Name);  
             this.dgAppointments.ItemsSource = this.currentBand.Appointments;
 
-            this.currentBand.RehearsalRequests = selectRehearsalRequestsOfBand(currentBand);
+            this.currentBand.RehearsalRequests = WebserviceManager.GetRehearsalRequestsOfBand(currentBand.Name);
             this.dgRehearsalRequests.ItemsSource = this.currentBand.RehearsalRequests;
 
             DisplaySignedInData();
@@ -64,224 +62,24 @@ namespace Bandmanagement.View
 
             if (insertedMusician.Username.Length > 0 && insertedMusician.Password.Length > 0)  //if data is correct
             {
-                //add bandmeber to band
-                dbOra.Connect();
-
-                //insert musician
-                OleDbCommand cmdInsertMusician = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdInsertMusician.CommandText = "insert into musicians values (0, ?, ?, ?, ?, null, null)";
-                cmdInsertMusician.Parameters.AddWithValue("username", insertedMusician.Username);
-                cmdInsertMusician.Parameters.AddWithValue("password", insertedMusician.Password);
-                cmdInsertMusician.Parameters.AddWithValue("firstname", insertedMusician.FirstName);
-                cmdInsertMusician.Parameters.AddWithValue("lastname", insertedMusician.LastName);
-
-                try
+                if (WebserviceManager.AddMusician(insertedMusician))
                 {
-                    cmdInsertMusician.ExecuteNonQuery();
-
-                    //select inserted-musician id
-                    insertedMusician = selectDataFromMusicianUsername(insertedMusician);
-
                     //insert bandmember
-                    insertBandmember(currentBand, insertedMusician);
-                }
-                catch (Exception)
-                {
-                    if (currentBand.Musicians.FirstOrDefault(bm => bm.Username == insertedMusician.Username) != null) //if musician is in this band
+                    if (WebserviceManager.AddMusicianToBand(currentBand, insertedMusician.Username) == false)
                     {
                         this.printError("Musiker bereits in eigener Band!");
                     }
-
-                    else if (Xceed.Wpf.Toolkit.MessageBox.Show("User existiert bereits", 
+                }
+                else if (Xceed.Wpf.Toolkit.MessageBox.Show("User existiert bereits", 
                         "Möchten sie den User trotzdem zur Band hinzufügen?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        //insert Bandmember
-                        insertedMusician = selectDataFromMusicianUsername(insertedMusician);
-
-                        insertBandmember(currentBand, insertedMusician);
-                    }
+                {
+                    WebserviceManager.AddMusicianToBand(currentBand, insertedMusician.Username);
                 }
             }
             else
             {
                 this.printError("Alle Felder müssen ausgefüllt werden!");
             }
-
-            this.dbOra.Close();
-        }
-
-        private void insertBandmember(Band band, Musician insertedMusician)
-        {
-            OleDbCommand cmdInsertBandmember = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdInsertBandmember.CommandText = "insert into bandmembers values(?, ?, ?)";
-            cmdInsertBandmember.Parameters.AddWithValue("bandId", band.Id);
-            cmdInsertBandmember.Parameters.AddWithValue("musicianId", insertedMusician.Id);
-            cmdInsertBandmember.Parameters.AddWithValue("joinedDate", DateTime.Today.ToString("d"));
-
-            cmdInsertBandmember.ExecuteNonQuery();
-
-            this.currentBand.Musicians.Add(insertedMusician);
-            this.dgCurrentBandmembers.Items.Refresh();
-        }
-
-        private Musician selectDataFromMusicianUsername(Musician insertedMusician)
-        {
-            Musician retMusician = insertedMusician;
-
-            OleDbCommand cmdSelectMusicianData = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectMusicianData.CommandText = "select id, password, first_name, last_name from musicians where username = ?";
-            cmdSelectMusicianData.Parameters.AddWithValue("username", insertedMusician.Username);
-
-            OleDbDataReader reader = cmdSelectMusicianData.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                retMusician.Id = Int32.Parse(reader["id"].ToString());
-                retMusician.Password = reader["password"].ToString();
-                retMusician.FirstName = reader["first_name"].ToString();
-                retMusician.LastName = reader["last_name"].ToString();
-            }
-            reader.Close();
-
-            return retMusician;
-        }
-
-        private List<Musician> selectMembersOfBand(Band band)
-        {
-            List<Musician> retList = new List<Musician>();
-
-            this.dbOra.Connect();
-
-            OleDbCommand cmdSelectMusicianData = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectMusicianData.CommandText = @"select m.id as mId, m.username as mUsername, m.password as mPwd, m.first_name as mFName,
-                m.last_name mLName, m.birthdate mBirth from musicians m 
-                join bandmembers bm on m.id = bm.musician_id where bm.band_id = ?";
-            cmdSelectMusicianData.Parameters.AddWithValue("bandId", band.Id);
-
-            OleDbDataReader reader = cmdSelectMusicianData.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                Musician next = new Musician();
-                next.Id = int.Parse(reader["mId"].ToString());
-                next.Username = reader["mUsername"].ToString();
-                next.Password = reader["mPwd"].ToString();
-                next.FirstName = reader["mFName"].ToString();
-                next.LastName = reader["mLName"].ToString();
-
-                retList.Add(next);
-            }
-
-            reader.Close();
-            this.dbOra.Close();
-
-            return retList;
-        }
-
-        private List<AppearanceRequest> selectAppearanceRequestOfBand(Band band)
-        {
-            List<AppearanceRequest> retRequests = new List<AppearanceRequest>();
-            this.dbOra.Connect();
-
-            OleDbCommand cmdSelectMusicianData = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectMusicianData.CommandText = @"select m.id as mId, m.start_time as mSTime, m.end_time as mETime, l.id as lId, l.name as lName,
-                m.accepted mAccepted, m.Name as mName, m.Description as mDesc from appearance_requests m join locations l on m.location_id = l.id where m.band_id = ?";
-            cmdSelectMusicianData.Parameters.AddWithValue("bandId", band.Id);
-
-            OleDbDataReader reader = cmdSelectMusicianData.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                AppearanceRequest next = new AppearanceRequest();
-                next.Id = int.Parse(reader["mId"].ToString());
-                next.Name = reader["mName"].ToString();
-                next.Description = reader["mDesc"].ToString();
-                next.StartTime = DateTime.Parse(reader["mSTime"].ToString());
-                next.EndTime = DateTime.Parse(reader["mETime"].ToString());
-                next.Location.Id = int.Parse(reader["lId"].ToString());
-                next.Location.Name = reader["lName"].ToString();
-                next.Accepted = int.Parse(reader["mAccepted"].ToString());
-
-                retRequests.Add(next);
-            }
-
-            reader.Close();
-            this.dbOra.Close();
-            return retRequests;
-        }
-
-        private List<RehearsalRequest> selectRehearsalRequestsOfBand(Band band)
-        {
-            List<RehearsalRequest> retRequests = new List<RehearsalRequest>();
-            this.dbOra.Connect();
-
-            OleDbCommand cmdSelectRequests = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectRequests.CommandText = @"select m.id as mId, m.start_time as mSTime, m.end_time as mETime,  m.duration as mDuration from rehearsal_requests m where m.band_id = ?";
-            cmdSelectRequests.Parameters.AddWithValue("bandId", band.Id);
-
-            OleDbDataReader reader = cmdSelectRequests.ExecuteReader();
-            while (reader.Read())
-            {
-                RehearsalRequest next = new RehearsalRequest();
-                next.Id = int.Parse(reader["mId"].ToString());
-                next.StartTime = DateTime.Parse(reader["mSTime"].ToString());
-                next.EndTime = DateTime.Parse(reader["mETime"].ToString());
-                next.Duration = Double.Parse(reader["mDuration"].ToString());
-
-                retRequests.Add(next);
-            }
-
-            reader.Close();
-            this.dbOra.Close();
-
-            return retRequests;
-        }
-
-        private List<Appointment> selectAppointmentsOfBand(Band band)
-        {
-            List<Appointment> retAppointments = new List<Appointment>();
-            this.dbOra.Connect();
-
-            OleDbCommand cmdSelectMusicianData = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectMusicianData.CommandText = @"select m.id as mId, m.start_time as mSTime, m.end_time as mETime, l.id as lId, l.name as lName,
-                m.grounded mGrounded, m.Name as mName, m.Description as mDesc from appointments m join locations l on m.location_id = l.id where m.band_id = ?";
-            cmdSelectMusicianData.Parameters.AddWithValue("bandId", band.Id);
-
-            OleDbDataReader reader = cmdSelectMusicianData.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                Appointment next = new Appointment();
-                next.Id = int.Parse(reader["mId"].ToString());
-                next.Name = reader["mName"].ToString();
-                next.Description = reader["mDesc"].ToString();
-                next.StartTime = DateTime.Parse(reader["mSTime"].ToString());
-                next.EndTime = DateTime.Parse(reader["mETime"].ToString());
-                next.Location.Id = int.Parse(reader["lId"].ToString());
-                next.Location.Name = reader["lName"].ToString();
-                next.Grounded = int.Parse(reader["mGrounded"].ToString());
-                next.Type = selectAppointmentType(next);
-
-                retAppointments.Add(next);
-            }
-
-            reader.Close();
-            this.dbOra.Close();
-            return retAppointments;
-        }
-
-        private EnumAppointmentType selectAppointmentType(Appointment appointment)
-        {
-            EnumAppointmentType retType = EnumAppointmentType.Appearance;
-
-            OleDbCommand cmdSelect = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelect.CommandText = "select * from rehearsals where appointment_id = ?";
-            cmdSelect.Parameters.AddWithValue("appId", appointment.Id);
-
-            OleDbDataReader reader = cmdSelect.ExecuteReader();
-            while (reader.Read())
-            {
-                retType = EnumAppointmentType.Rehearsal;
-            }
-            reader.Close();
-
-            return retType;
         }
 
         private void printError(String message)
@@ -295,15 +93,7 @@ namespace Bandmanagement.View
             this.currentBand.Musicians.Remove(selectedMusician);
             this.dgCurrentBandmembers.Items.Refresh();
 
-            this.dbOra.Connect();
-
-            OleDbCommand cmdDeleteBandmember = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdDeleteBandmember.CommandText = "delete from bandmembers where band_id = ? and musician_id = ?";
-            cmdDeleteBandmember.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdDeleteBandmember.Parameters.AddWithValue("musicianId", selectedMusician.Id);
-            cmdDeleteBandmember.ExecuteNonQuery();
-
-            this.dbOra.Close();
+            WebserviceManager.RemoveMusicianFromBand(currentBand, selectedMusician.Username);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -322,42 +112,16 @@ namespace Bandmanagement.View
 
             this.tbBandCostsPerHour.Text = this.currentBand.CostsPerHour.ToString();
 
-            this.cbLocations.ItemsSource = selectAllLocations();
+            this.cbLocations.ItemsSource = WebserviceManager.GetLocations();
             this.cbLocationsFixRehearsal.ItemsSource = this.cbLocations.ItemsSource;
-        }
-
-        private List<Model.Location> selectAllLocations()
-        {
-            List<Model.Location> retList = new List<Model.Location>();
-
-            this.dbOra.Connect();
-
-            OleDbCommand cmdSelectId = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectId.CommandText = "select id, name from locations";
-
-            OleDbDataReader reader = cmdSelectId.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                retList.Add(new Model.Location(Int32.Parse(reader["id"].ToString()), reader["name"].ToString()));
-            }
-
-            reader.Close();
-            this.dbOra.Close();
-
-            return retList;
         }
 
         private void btnAcceptAppearanceRequest_Click(object sender, RoutedEventArgs e)
         { //remove from app requests and add to appointments and appearance
             AppearanceRequest requestToUpdate = (AppearanceRequest)this.dgReceivedAppearanceRequests.SelectedItem;
-            
-            this.dbOra.Connect();
 
             //remove from appRequests
-            OleDbCommand cmdDeleteRequest = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdDeleteRequest.CommandText = "delete from appearance_requests where id = ?";
-            cmdDeleteRequest.Parameters.AddWithValue("appReqId", requestToUpdate.Id);
-            cmdDeleteRequest.ExecuteNonQuery();
+            WebserviceManager.RemoveAppearanceRequest(requestToUpdate.Id);
 
             this.currentBand.AppearanceRequests.Remove(requestToUpdate);
             this.dgReceivedAppearanceRequests.Items.Refresh();
@@ -365,104 +129,33 @@ namespace Bandmanagement.View
             //add to appointments
             Appointment newAppointment = new Appointment(requestToUpdate);
 
-            OleDbCommand cmdinsertAppointment = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdinsertAppointment.CommandText = "insert into appointments values (0, ?, ?, ?, ?, ?, ?, ?)";
-            cmdinsertAppointment.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdinsertAppointment.Parameters.AddWithValue("locationId", newAppointment.Location.Id);
-            cmdinsertAppointment.Parameters.AddWithValue("grounded", newAppointment.Grounded);
-            cmdinsertAppointment.Parameters.AddWithValue("startTime", newAppointment.StartTime);
-            cmdinsertAppointment.Parameters.AddWithValue("endTime", newAppointment.EndTime);
-            cmdinsertAppointment.Parameters.AddWithValue("name", newAppointment.Name);
-            cmdinsertAppointment.Parameters.AddWithValue("description", newAppointment.Description);
-            cmdinsertAppointment.ExecuteNonQuery();
+            //TODO-----------------------
+            newAppointment.Id = WebserviceManager.AddAppointment(newAppointment, currentBand);
 
-            //add to appearances and to bandList
-            newAppointment.Id = selectAppointmentId(newAppointment);
-
-            OleDbCommand cmdInsertAppearance = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdInsertAppearance.CommandText = "insert into appearances values (?, ?)";
-            cmdInsertAppearance.Parameters.AddWithValue("appointmentId", newAppointment.Id);
-            cmdInsertAppearance.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdInsertAppearance.ExecuteNonQuery();
-
+            WebserviceManager.AddAppearance(currentBand, newAppointment);
             this.currentBand.Appointments.Add(newAppointment);
 
-            this.dbOra.Close();
             this.dgAppointments.Items.Refresh();
         }
 
-        private int selectAppointmentId(Appointment newAppointment)
-        {
-            int retId = -1;
-
-            OleDbCommand cmdSelectId = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectId.CommandText = "select id  from appointments where band_id = ? and start_time = ? and end_time = ?";
-            cmdSelectId.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdSelectId.Parameters.AddWithValue("startTime", newAppointment.StartTime);
-            cmdSelectId.Parameters.AddWithValue("endTime", newAppointment.EndTime);
-
-            OleDbDataReader reader = cmdSelectId.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                retId = Int32.Parse(reader["id"].ToString());
-            }
-            reader.Close();
-
-            return retId;
-        }
-
-        private int selectRehearsalRequestId(RehearsalRequest rehRequest)
-        {
-            int retId = -1;
-
-            OleDbCommand cmdSelectId = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectId.CommandText = "select id  from rehearsal_requests where band_id = ? and start_time = ? and end_time = ?";
-            cmdSelectId.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdSelectId.Parameters.AddWithValue("startTime", rehRequest.StartTime);
-            cmdSelectId.Parameters.AddWithValue("endTime", rehRequest.EndTime);
-
-            OleDbDataReader reader = cmdSelectId.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                retId = Int32.Parse(reader["id"].ToString());
-            }
-            reader.Close();
-
-            return retId;
-        }
-
-        private void btnDeclineAppearanceRequest_Click(object sender, RoutedEventArgs e)
+        private void btnDeclineAppearanceRequest_Click(object sender, RoutedEventArgs e) 
         {
             AppearanceRequest requestToUpdate = (AppearanceRequest)this.dgReceivedAppearanceRequests.SelectedItem;
             //remove from app requests
+            WebserviceManager.RemoveAppearanceRequest(requestToUpdate.Id);
 
-            this.dbOra.Connect();
-
-            OleDbCommand cmdUpdateRequest = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdUpdateRequest.CommandText = "delete from appearance_requests where id = ?";
-            cmdUpdateRequest.Parameters.AddWithValue("appReqId", requestToUpdate.Id);
-            cmdUpdateRequest.ExecuteNonQuery();
-
-            this.dbOra.Close();
             this.currentBand.AppearanceRequests.Remove(requestToUpdate);
             this.dgReceivedAppearanceRequests.Items.Refresh();
         }
 
-        private void btnGroundAppointment_Click(object sender, RoutedEventArgs e)
+        private void btnGroundAppointment_Click(object sender, RoutedEventArgs e) 
         {
             Appointment appointmentToUpdate = (Appointment)this.dgAppointments.SelectedItem;
 
-            if (appointmentToUpdate.HaveAllAccepted(currentBand))
+            if (WebserviceManager.AllMembersOfBandAccepted(currentBand, appointmentToUpdate))
             {
                 //set grounded to one
-                this.dbOra.Connect();
-
-                OleDbCommand cmdUpdateRequest = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdUpdateRequest.CommandText = "update appointments set grounded = 1 where id = ?";
-                cmdUpdateRequest.Parameters.AddWithValue("appReqId", appointmentToUpdate.Id);
-                cmdUpdateRequest.ExecuteNonQuery();
-
-                this.dbOra.Close();
+                WebserviceManager.GroundAppointment(appointmentToUpdate.Id);
 
                 appointmentToUpdate.Grounded = 1;
                 this.dgAppointments.Items.Refresh();
@@ -477,24 +170,14 @@ namespace Bandmanagement.View
         {
             Appointment appointmentToUpdate = (Appointment)this.dgAppointments.SelectedItem;
             //remove from appointments and rehearsals / appearances
-          
-            this.dbOra.Connect();
-            OleDbCommand cmdRemoveAppointment = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdRemoveAppointment.CommandText = "delete from " + appointmentToUpdate.Type + "s where appointment_id = ?";
-            cmdRemoveAppointment.Parameters.AddWithValue("appId", appointmentToUpdate.Id);
-            cmdRemoveAppointment.ExecuteNonQuery();
 
-            cmdRemoveAppointment = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdRemoveAppointment.CommandText = "delete from appointments where id = ?";
-            cmdRemoveAppointment.Parameters.AddWithValue("appId", appointmentToUpdate.Id);
-            cmdRemoveAppointment.ExecuteNonQuery();
+            WebserviceManager.RemoveAppointment(appointmentToUpdate);
 
-            this.dbOra.Close();
             this.currentBand.Appointments.Remove(appointmentToUpdate);
             this.dgAppointments.Items.Refresh();
         }
 
-        private void btnCreateNewRehearsal_Click(object sender, RoutedEventArgs e)
+        private void btnCreateNewRehearsal_Click(object sender, RoutedEventArgs e) 
         {
             RehearsalRequest rehRequest = new RehearsalRequest();
 
@@ -507,21 +190,10 @@ namespace Bandmanagement.View
                 if (rehRequest.StartTime != null && rehRequest.EndTime != null)
                 {
                     //insert request and add to band
-                    this.dbOra.Connect();
+                    rehRequest.Id = WebserviceManager.AddRehearsalRequest(currentBand, rehRequest);
 
-                    OleDbCommand cmdinsertRehRequest = dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdinsertRehRequest.CommandText = "insert into rehearsal_requests values (0, ?, ?, ?, ?)";
-                    cmdinsertRehRequest.Parameters.AddWithValue("bandId", currentBand.Id);
-                    cmdinsertRehRequest.Parameters.AddWithValue("startTime", rehRequest.StartTime);
-                    cmdinsertRehRequest.Parameters.AddWithValue("endTime", rehRequest.EndTime);
-                    cmdinsertRehRequest.Parameters.AddWithValue("duration", rehRequest.Duration);
-                    cmdinsertRehRequest.ExecuteNonQuery();
-
-                    rehRequest.Id = selectRehearsalRequestId(rehRequest);
                     this.currentBand.RehearsalRequests.Add(rehRequest);
                     this.dgRehearsalRequests.Items.Refresh();
-
-                    this.dbOra.Close();
                 }
             }
             catch (Exception)
@@ -530,19 +202,12 @@ namespace Bandmanagement.View
             }
         }
 
-        private void btnRemoveRehearsalRequest_Click(object sender, RoutedEventArgs e)
+        private void btnRemoveRehearsalRequest_Click(object sender, RoutedEventArgs e) 
         {
             RehearsalRequest requestToUpdate = (RehearsalRequest)this.dgRehearsalRequests.SelectedItem;
             //remove from app requests
-
-            this.dbOra.Connect();
-
-            OleDbCommand cmdUpdateRequest = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdUpdateRequest.CommandText = "delete from rehearsal_requests where id = ?";
-            cmdUpdateRequest.Parameters.AddWithValue("rehReqId", requestToUpdate.Id);
-            cmdUpdateRequest.ExecuteNonQuery();
-
-            this.dbOra.Close();
+            WebserviceManager.RemoveRehearsalRequest(requestToUpdate.Id);
+ 
             this.currentBand.RehearsalRequests.Remove(requestToUpdate);
             this.dgRehearsalRequests.Items.Refresh();
         }
@@ -554,7 +219,7 @@ namespace Bandmanagement.View
             if (rehRequestToFix != null)
             {
                 //select available times where person has min duration-time between start and end
-                loadAllAvailableTimes();
+                currentBand = WebserviceManager.GetAvailableTimesOfBand(currentBand);  //set the ones to the mitarbeiter and send band back?
 
                 //calculate times where all members have time and add them to list
                 List<AvailableTime> listEntries = calcBestTimesForRehRequest(rehRequestToFix);
@@ -564,30 +229,6 @@ namespace Bandmanagement.View
             {
                 this.lvSuggestedTimesRehearsalRequest.ItemsSource = null;
             }
-        }
-
-        private void loadAllAvailableTimes()
-        {
-            this.dbOra.Connect();
-
-            OleDbCommand cmdSelectId = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectId.CommandText = "select id, musician_id, start_time, end_time from available_times where band_id = ?";
-            cmdSelectId.Parameters.AddWithValue("bandId", currentBand.Id);
-
-            foreach (Musician m in currentBand.MusiciansWithLeader)
-            {
-                m.AvailableTimes = new List<AvailableTime>();
-            }
-
-            OleDbDataReader reader = cmdSelectId.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                Musician mus = this.currentBand.MusiciansWithLeader.FirstOrDefault(m => m.Id == Int32.Parse(reader["musician_id"].ToString()));
-                mus.AvailableTimes.Add(new AvailableTime(Int32.Parse(reader["id"].ToString()), DateTime.Parse(reader["start_time"].ToString()), DateTime.Parse(reader["end_time"].ToString())));
-            }
-
-            reader.Close();
-            this.dbOra.Close();
         }
 
         private List<AvailableTime> calcBestTimesForRehRequest(RehearsalRequest rehRequest)
@@ -664,26 +305,8 @@ namespace Bandmanagement.View
 
         private void btnUpdateBandData_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                int newCosts = int.Parse(this.tbBandCostsPerHour.Text);
-                this.currentBand.CostsPerHour = newCosts;
-
-                this.dbOra.Connect();
-
-                OleDbCommand cmdUpdate = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdUpdate.CommandText = "update bands set costs_per_hour = ? where id = ?";
-                cmdUpdate.Parameters.AddWithValue("costsPerHour",this.currentBand.CostsPerHour);
-                cmdUpdate.Parameters.AddWithValue("bandId", this.currentBand.Id);
-
-                cmdUpdate.ExecuteNonQuery();
-
-                this.dbOra.Close();
-            }
-            catch (Exception)
-            {
-                this.printError("Daten nicht korrekt!");
-            }
+            currentBand.CostsPerHour = int.Parse(this.tbBandCostsPerHour.Text);
+            WebserviceManager.UpdateBand(currentBand);
         }
 
         private void btnCreateAppointment_Click(object sender, RoutedEventArgs e)
@@ -695,31 +318,10 @@ namespace Bandmanagement.View
             Model.Location location = (Model.Location)this.cbLocations.SelectedItem;
             Appointment newAppointment = new Appointment(name, description, startTime, endTime, location, EnumAppointmentType.Appearance);
 
-            this.dbOra.Connect();
-
-            OleDbCommand cmdinsertAppointment = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdinsertAppointment.CommandText = "insert into appointments values (0, ?, ?, ?, ?, ?, ?, ?)";
-            cmdinsertAppointment.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdinsertAppointment.Parameters.AddWithValue("locationId", newAppointment.Location.Id);
-            cmdinsertAppointment.Parameters.AddWithValue("grounded", newAppointment.Grounded);
-            cmdinsertAppointment.Parameters.AddWithValue("startTime", newAppointment.StartTime);
-            cmdinsertAppointment.Parameters.AddWithValue("endTime", newAppointment.EndTime);
-            cmdinsertAppointment.Parameters.AddWithValue("name", newAppointment.Name);
-            cmdinsertAppointment.Parameters.AddWithValue("description", newAppointment.Description);
-            cmdinsertAppointment.ExecuteNonQuery();
-
-            //add to appearances and to bandList
-            newAppointment.Id = selectAppointmentId(newAppointment);
-
-            OleDbCommand cmdInsertAppearance = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdInsertAppearance.CommandText = "insert into appearances values (?, ?)";
-            cmdInsertAppearance.Parameters.AddWithValue("appointmentId", newAppointment.Id);
-            cmdInsertAppearance.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdInsertAppearance.ExecuteNonQuery();
+            newAppointment.Id = WebserviceManager.AddAppointment(newAppointment, currentBand);               
+            WebserviceManager.AddAppearance(currentBand, newAppointment);           
 
             this.currentBand.Appointments.Add(newAppointment);
-
-            this.dbOra.Close();
             this.dgAppointments.Items.Refresh();
         }
 
@@ -738,27 +340,8 @@ namespace Bandmanagement.View
 
             if (mustBeBetweenTime != null && newAppointment.StartTime >= mustBeBetweenTime.StartTime && newAppointment.EndTime <= mustBeBetweenTime.EndTime)
             {
-                this.dbOra.Connect();
-
-                OleDbCommand cmdinsertAppointment = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdinsertAppointment.CommandText = "insert into appointments values (0, ?, ?, ?, ?, ?, ?, ?)";
-                cmdinsertAppointment.Parameters.AddWithValue("bandId", currentBand.Id);
-                cmdinsertAppointment.Parameters.AddWithValue("locationId", newAppointment.Location.Id);
-                cmdinsertAppointment.Parameters.AddWithValue("grounded", newAppointment.Grounded);
-                cmdinsertAppointment.Parameters.AddWithValue("startTime", newAppointment.StartTime);
-                cmdinsertAppointment.Parameters.AddWithValue("endTime", newAppointment.EndTime);
-                cmdinsertAppointment.Parameters.AddWithValue("name", newAppointment.Name);
-                cmdinsertAppointment.Parameters.AddWithValue("description", newAppointment.Description);
-                cmdinsertAppointment.ExecuteNonQuery();
-
-                //add to appearances and to bandList
-                newAppointment.Id = selectAppointmentId(newAppointment);
-
-                OleDbCommand cmdInsertAppearance = dbOra.getMyOleDbConnection().CreateCommand();
-                cmdInsertAppearance.CommandText = "insert into rehearsals values (?, ?)";
-                cmdInsertAppearance.Parameters.AddWithValue("appointmentId", newAppointment.Id);
-                cmdInsertAppearance.Parameters.AddWithValue("bandId", currentBand.Id);
-                cmdInsertAppearance.ExecuteNonQuery();
+                newAppointment.Id = WebserviceManager.AddAppointment(newAppointment, currentBand);
+                WebserviceManager.AddAppearance(currentBand, newAppointment);
 
                 this.currentBand.Appointments.Add(newAppointment);
 
@@ -770,7 +353,6 @@ namespace Bandmanagement.View
 
                // this.currentBand.RehearsalRequests.Remove(rehReq);
 
-                this.dbOra.Close();
                 this.dgAppointments.Items.Refresh();
                 this.dgRehearsalRequests.Items.Refresh();
             }
@@ -780,43 +362,18 @@ namespace Bandmanagement.View
             }
         }
 
-        private void dgAppointments_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void dgAppointments_SelectionChanged(object sender, SelectionChangedEventArgs e)  //TODO
         {
             Appointment selAppointment = (Appointment)this.dgAppointments.SelectedItem;
 
             if (selAppointment != null)
             {
-                selAppointment.MusicianAnswers = loadMusicianAnswersFromAppointment(selAppointment);
-                this.lvMusicianAnswers.ItemsSource = selAppointment.MusicianAnswers;
+                this.lvMusicianAnswers.ItemsSource =WebserviceManager.AllAnswersOfAppointment(currentBand.Name, selAppointment.Id);
             }
             else
             {
                 this.lvMusicianAnswers.ItemsSource = null;
             }
-        }
-
-        private Dictionary<String, int> loadMusicianAnswersFromAppointment(Appointment selAppointment)
-        {
-            Dictionary<String, int> retDict = new Dictionary<String, int>();
-
-            this.dbOra.Connect();
-
-            OleDbCommand cmdSelectMusicianData = dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectMusicianData.CommandText = @"select m.username as mUsername, a.accepted as aAccepted from appointment_attendances a join musicians m on a.musician_id = m.id 
-                                                  where a.band_id = ? and a.appointment_id = ?";
-            cmdSelectMusicianData.Parameters.AddWithValue("bandId", currentBand.Id);
-            cmdSelectMusicianData.Parameters.AddWithValue("appId", selAppointment.Id);
-
-            OleDbDataReader reader = cmdSelectMusicianData.ExecuteReader(); //get password if musician already exists
-            while (reader.Read())
-            {
-                retDict.Add(reader["mUsername"].ToString(), int.Parse(reader["aAccepted"].ToString()));
-            }
-
-            reader.Close();
-            this.dbOra.Close();
-
-            return retDict;
         }
     }
 }

@@ -1,0 +1,15 @@
+package pkgModel;
+
+import java.util.Vector;
+
+public class Band {
+	private int id;
+	private String name;
+	private Musician leader;
+	private int costsPerHour;
+	private Vector<Musician> musicians;
+	private Vector<AppearanceRequest> appearanceRequests;
+	private Vector<RehearsalRequest> rehearsalRequests;
+	private Vector<Appointment> appointments;
+
+}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,13 @@ namespace Bandmanagement.Model
 {
     public class AvailableTime
     {
+        [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 
+        [JsonProperty(PropertyName = "startTime")]
         public DateTime StartTime { get; set; }
 
+        [JsonProperty(PropertyName = "endTime")]
         public DateTime EndTime { get; set; }
 
         public AvailableTime()

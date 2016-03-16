@@ -1,4 +1,5 @@
-﻿using SpatialClient.Model;
+﻿using Bandmanagement.Model;
+using SpatialClient.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
@@ -22,7 +23,6 @@ namespace SpatialClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DatabaseOracle dbOra = new DatabaseOracle();
         private EnumSpatialType currentSpatialInsertType = EnumSpatialType.CITY;  //default value as it's selected at the start
         private Shape currentSpatialObjectSelected = null;  
         Boolean IsDragAndDropActive = false;
@@ -79,25 +79,7 @@ namespace SpatialClient
                     locToInsert.Name = this.tbNameOfObject.Text;
 
                     //insert city in oracle
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdInsertCity = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdInsertCity.CommandText = @"insert into locations values(0, ?, SDO_GEOMETRY(2003,NULL,NULL,SDO_ELEM_INFO_ARRAY(1,1,1), 
-                                             SDO_ORDINATE_ARRAY(" + Math.Round(currentMousePos.X, 2) + "," + Math.Round(currentMousePos.Y, 2) + ")))";
-                    cmdInsertCity.Parameters.AddWithValue("name", locToInsert.Name);
-                    cmdInsertCity.ExecuteNonQuery();
-
-                    OleDbCommand cmdSelectCityId = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdSelectCityId.CommandText = @"select max(id) as maxId from locations l";
-                    cmdSelectCityId.Parameters.AddWithValue("name", locToInsert.Name);
-
-                    OleDbDataReader readerCityId = cmdSelectCityId.ExecuteReader();
-                    while (readerCityId.Read())
-                    {
-                        locToInsert.Id = int.Parse(readerCityId["maxId"].ToString());
-                    }
-
-                    this.dbOra.Close();
+                    locToInsert.Id = WebserviceManager.AddLocation(locToInsert, Math.Round(currentMousePos.X, 2), Math.Round(currentMousePos.Y, 2));
 
                     //insert city in canvas
                     String ellName = "city_" + locToInsert.Id + "_" + locToInsert.Name;  //name like "city_1_Villach
@@ -130,31 +112,14 @@ namespace SpatialClient
                 {
                     Location locToUpdate = this.getLocationDataFromEllName(this.currentSpatialObjectSelected.Name);
 
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdUpdateCoords = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdUpdateCoords.CommandText = @"update locations set shape = SDO_GEOMETRY(2003,NULL,NULL,SDO_ELEM_INFO_ARRAY(1,1,1), 
-                                             SDO_ORDINATE_ARRAY(" + Math.Round(currentMousePos.X, 2) + "," + Math.Round(currentMousePos.Y, 2) + ")) where id = ?";
-
-                    cmdUpdateCoords.Parameters.AddWithValue("id", locToUpdate.Id);
-                    cmdUpdateCoords.ExecuteNonQuery();
-
-                    this.dbOra.Close();
+                    WebserviceManager.UpdateLocation(locToUpdate, Math.Round(currentMousePos.X, 2), Math.Round(currentMousePos.Y, 2));
                 }
                 else if (this.currentSpatialObjectSelected is Line) //is street
                 {
                     Street locToUpdate = this.getStreetDataFromEllName(this.currentSpatialObjectSelected.Name);
 
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdUpdateCoords = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdUpdateCoords.CommandText = @"update streets set shape = SDO_GEOMETRY(2002,NULL,NULL,SDO_ELEM_INFO_ARRAY(1,1, 1,1), 
-                                             SDO_ORDINATE_ARRAY(" + Math.Round(((Line)this.currentSpatialObjectSelected).X1, 2) + "," + Math.Round(((Line)this.currentSpatialObjectSelected).Y1, 2) +
-                                             ", " + Math.Round(((Line)this.currentSpatialObjectSelected).X2, 2) + "," + Math.Round(((Line)this.currentSpatialObjectSelected).Y2, 2) + ")) where id = ?";
-                    cmdUpdateCoords.Parameters.AddWithValue("id", locToUpdate.Id);
-                    cmdUpdateCoords.ExecuteNonQuery();
-
-                    this.dbOra.Close();
+                    WebserviceManager.UpdateStreet(locToUpdate, Math.Round(((Line)this.currentSpatialObjectSelected).X1, 2), Math.Round(((Line)this.currentSpatialObjectSelected).Y1, 2),
+                        Math.Round(((Line)this.currentSpatialObjectSelected).X2, 2), Math.Round(((Line)this.currentSpatialObjectSelected).Y2, 2));
                 }
 
                 this.IsDragAndDropActive = false;
@@ -165,32 +130,12 @@ namespace SpatialClient
                 {
                     Point streetEndPoint = currentMousePos;
                     Street insertedStr = new Street();
-
-                    //insert street in oracle
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdInsertCity = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdInsertCity.CommandText = @"insert into streets values(0, ?, SDO_GEOMETRY(2002,NULL,NULL,SDO_ELEM_INFO_ARRAY(1,1, 1,1), 
-                                             SDO_ORDINATE_ARRAY(" + Math.Round(this.StreetStartPoint.X, 2) + "," + Math.Round(this.StreetStartPoint.Y, 2) +
-                                             ", " + Math.Round(streetEndPoint.X, 2) + "," + Math.Round(streetEndPoint.Y, 2) + ")))";
-                    cmdInsertCity.Parameters.AddWithValue("name", "test");
-                    cmdInsertCity.ExecuteNonQuery();
-
-                    OleDbCommand cmdSelectStreetId = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdSelectStreetId.CommandText = @"select max(id) as maxId from streets s";
-
-                    OleDbDataReader readerCityId = cmdSelectStreetId.ExecuteReader();
-                    while (readerCityId.Read())
-                    {
-                        insertedStr.Id = int.Parse(readerCityId["maxId"].ToString());
-                    }
-
                     insertedStr.Name = this.tbNameOfObject.Text;
 
+                    insertedStr.Id = WebserviceManager.AddStreet(insertedStr, Math.Round(this.StreetStartPoint.X, 2), Math.Round(this.StreetStartPoint.Y, 2),
+                        Math.Round(streetEndPoint.X, 2), Math.Round(streetEndPoint.Y, 2));
+
                     setEllNameFromStreetData(insertedStr, this.DrawingLine);
-
-                    this.dbOra.Close();
-
                     this.IsDrawingStreet = false;
                 }
             }
@@ -321,40 +266,31 @@ namespace SpatialClient
             Line nextStreet = null;
             Dictionary<String, PointCollection> streetData = new Dictionary<String, PointCollection>();  //string-Key is like id + _ + name e.g.: "1_Bundesstraße Villach"
 
-            this.dbOra.Connect();
+            List<AddSpatialWrapper> wrappers = WebserviceManager.GetLocationsSpatial();
 
-            //read locations
-            OleDbCommand cmdSelectLocations = this.dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectLocations.CommandText = "select l.id as lid, l.name as lname, t.x as tX, t.y as tY FROM locations l, TABLE(SDO_UTIL.GETVERTICES(l.shape)) t";
-
-            OleDbDataReader reader = cmdSelectLocations.ExecuteReader();
-            while (reader.Read())
+            foreach (AddSpatialWrapper wrapper in wrappers)
             {
-                ellName = "city_" + reader["lid"] + "_" + reader["lname"];  //name like "city_1_Villach
+                ellName = "city_" + wrapper.Location.Id + "_" + wrapper.Location.Name;  //name like "city_1_Villach
                 nextLocation = generateEllipse(ellName, 12, 12);
                 
-                var x = Double.Parse(reader["tY"].ToString());
-
                 this.canSpatialData.Children.Add(nextLocation);
-                Canvas.SetTop(nextLocation, Double.Parse(reader["tY"].ToString()) - (nextLocation.Height / 2));
-                Canvas.SetLeft(nextLocation, Double.Parse(reader["tX"].ToString()) - (nextLocation.Width / 2));
+                Canvas.SetTop(nextLocation, wrapper.Y - (nextLocation.Height / 2));
+                Canvas.SetLeft(nextLocation, wrapper.X - (nextLocation.Width / 2));
             }
 
             //read streets
-            OleDbCommand cmdSelectStreets = this.dbOra.getMyOleDbConnection().CreateCommand();
-            cmdSelectStreets.CommandText = "select s.id as sid, s.name as sname, t.x as tX, t.y as tY FROM streets s, TABLE(SDO_UTIL.GETVERTICES(s.shape)) t";
+            wrappers = WebserviceManager.GetStreetsSpatial();  //TODO
 
-            reader = cmdSelectStreets.ExecuteReader();
-            while (reader.Read())
+            foreach (AddSpatialWrapper wrapper in wrappers)
             {
-                String nextKey = reader["sid"] + "_" + reader["sname"];
+                String nextKey = wrapper.Street.Id + "_" + wrapper.Street.Name;
 
                 if (streetData.ContainsKey(nextKey) == false)
                 {
                     streetData.Add(nextKey, new PointCollection());
                 }
 
-                streetData[nextKey].Add(new Point(Math.Round(Double.Parse(reader["tX"].ToString()), 2), Math.Round(Double.Parse(reader["tY"].ToString()), 2)));
+                streetData[nextKey].Add(new Point(Math.Round(wrapper.X, 2), Math.Round(wrapper.Y, 2)));
             }
 
             foreach (String key in streetData.Keys)
@@ -364,8 +300,6 @@ namespace SpatialClient
 
                 this.canSpatialData.Children.Add(nextStreet);
             }
-
-            this.dbOra.Close();
         }
         #endregion
 
@@ -380,17 +314,8 @@ namespace SpatialClient
                     locToUpdate.Name = this.tbNameOfObject.Text;
 
                     //update in oracle
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdInsertCity = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdInsertCity.CommandText = @"update locations set name = ? where id = ?";
-                    cmdInsertCity.Parameters.AddWithValue("name", locToUpdate.Name);
-                    cmdInsertCity.Parameters.AddWithValue("id", locToUpdate.Id);
-                    cmdInsertCity.ExecuteNonQuery();
-
+                    WebserviceManager.UpdateLocation(locToUpdate, -1, -1);
                     setEllNameFromLocationData(locToUpdate, (Ellipse)this.currentSpatialObjectSelected);
-
-                    this.dbOra.Close();
                 }
                 else if (this.currentSpatialObjectSelected is Line) //if street
                 {
@@ -398,15 +323,7 @@ namespace SpatialClient
                     locToUpdate.Name = this.tbNameOfObject.Text;
 
                     //update in oracle
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdInsertCity = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdInsertCity.CommandText = @"update streets set name = ? where id = ?";
-                    cmdInsertCity.Parameters.AddWithValue("name", locToUpdate.Name);
-                    cmdInsertCity.Parameters.AddWithValue("id", locToUpdate.Id);
-                    cmdInsertCity.ExecuteNonQuery();
-
-                    this.dbOra.Close();
+                    WebserviceManager.UpdateStreet(locToUpdate, -1, -1, -1, -1);
 
                     setEllNameFromStreetData(locToUpdate, (Line)this.currentSpatialObjectSelected);
                 }
@@ -426,28 +343,14 @@ namespace SpatialClient
                     Location locToDelete = getLocationDataFromEllName(this.currentSpatialObjectSelected.Name);
 
                     //delete in oracle
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdInsertCity = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdInsertCity.CommandText = @"delete from locations where id = ?";
-                    cmdInsertCity.Parameters.AddWithValue("id", locToDelete.Id);
-                    cmdInsertCity.ExecuteNonQuery();
-
-                    this.dbOra.Close();
+                    WebserviceManager.DeleteLocation(locToDelete.Id);
                 }
                 else if (this.currentSpatialObjectSelected is Line) //if is street
                 {
                     Street locToDelete = getStreetDataFromEllName(this.currentSpatialObjectSelected.Name);
 
                     //delete in oracle
-                    this.dbOra.Connect();
-
-                    OleDbCommand cmdInsertCity = this.dbOra.getMyOleDbConnection().CreateCommand();
-                    cmdInsertCity.CommandText = @"delete from streets where id = ?";
-                    cmdInsertCity.Parameters.AddWithValue("id", locToDelete.Id);
-                    cmdInsertCity.ExecuteNonQuery();
-
-                    this.dbOra.Close();
+                    WebserviceManager.DeleteStreet(locToDelete.Id);
                 }
 
                 //delte in canvas

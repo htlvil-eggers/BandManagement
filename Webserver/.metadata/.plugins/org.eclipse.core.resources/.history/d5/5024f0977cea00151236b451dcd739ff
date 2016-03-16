@@ -1,0 +1,8 @@
+package pkgService;
+
+import javax.ws.rs.Path;
+
+@Path("/availableTimes")
+public class AvailableTimes {
+
+}

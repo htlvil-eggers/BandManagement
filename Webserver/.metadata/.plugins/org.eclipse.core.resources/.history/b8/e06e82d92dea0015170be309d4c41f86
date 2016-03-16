@@ -1,0 +1,18 @@
+package pkgService;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import pkgModel.*;
+
+@Path("/locations")
+public class Locations {
+
+  // This method is called if TEXT_PLAIN is request
+  @GET
+  @Produces(MediaType.APPLICATION_XML, MediaType.TEXT_XML)
+  public List<Location> getLocations() {
+    return "Hello Jersey";
+  }
+} 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,15 @@ namespace Bandmanagement.Model
 {
     public class Street
     {
+        [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 
+        [JsonProperty(PropertyName = "name")]
         public String Name { get; set; }
 
-        //TODO: lsdo_geometry
+        public Street()
+        {
+
+        }
     }
 }

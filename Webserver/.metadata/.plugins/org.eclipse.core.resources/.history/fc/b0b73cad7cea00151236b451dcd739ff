@@ -1,0 +1,12 @@
+package pkgService;
+
+import javax.ws.rs.Path;
+
+import pkgModel.DatabaseManager;
+
+@Path("/availableTimes")
+public class AvailableTimes {
+	private DatabaseManager db = new DatabaseManager();
+	
+	
+}

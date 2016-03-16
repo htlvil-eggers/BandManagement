@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,30 +9,38 @@ namespace Bandmanagement.Model
 {
     public class Appointment
     {
+        [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 
+        [JsonProperty(PropertyName = "name")]
         public String Name { get; set; }
 
+        [JsonProperty(PropertyName = "description")]
         public String Description { get; set; }
 
+        [JsonProperty(PropertyName = "startTime")]
         public DateTime? StartTime { get; set; }
 
+        [JsonProperty(PropertyName = "endTime")]
         public DateTime? EndTime { get; set; }
 
+        [JsonProperty(PropertyName = "location")]
         public Location Location { get; set; }
 
+        [JsonProperty(PropertyName = "grounded")]
         public int Grounded { get; set; }
 
+        [JsonProperty(PropertyName = "type")]
         public EnumAppointmentType Type { get; set; }
 
-        public Dictionary<String, int> MusicianAnswers { get; set; }
+       /* [JsonProperty(PropertyName = "musicianAnswers")]
+        public Dictionary<String, int> MusicianAnswers { get; set; }  //hashMap there?*/
 
 
         public Appointment ()
         {
             this.Grounded = 0;
             this.Location = new Location();
-            this.MusicianAnswers = new Dictionary<string, int>();
         }
 
         public Appointment (AppearanceRequest appRequest)
@@ -43,8 +52,7 @@ namespace Bandmanagement.Model
             this.EndTime = appRequest.EndTime;
             this.Location = appRequest.Location;
             this.Grounded = 0;
-            this.Type = EnumAppointmentType.Appearance;
-            this.MusicianAnswers = new Dictionary<string, int>();
+            this.Type = EnumAppointmentType.Appearance;;
         }
 
         public Appointment(String name, String description, DateTime? startTime, DateTime? endTime, Location location, EnumAppointmentType type)
@@ -56,7 +64,6 @@ namespace Bandmanagement.Model
             this.Location = location;
             this.Grounded = 0;
             this.Type = type;
-            this.MusicianAnswers = new Dictionary<string, int>();
         }
 
         public Appointment(string name, string description, Location location, RehearsalRequest rehReq)
@@ -69,12 +76,6 @@ namespace Bandmanagement.Model
             this.Location = location;
             this.Grounded = 0;
             this.Type = EnumAppointmentType.Rehearsal;
-            this.MusicianAnswers = new Dictionary<string, int>();
-        }
-
-        public bool HaveAllAccepted(Band b)
-        {
-            return this.MusicianAnswers.Values.Select(ma => ma == 1).Count() > b.MusiciansWithLeader.Count;
         }
     }
 }

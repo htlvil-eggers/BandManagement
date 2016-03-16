@@ -1,0 +1,8 @@
+package pkgModel;
+
+public class Street {
+	private int id;
+	private String name;
+	
+	
+}

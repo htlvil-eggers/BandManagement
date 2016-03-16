@@ -1,0 +1,22 @@
+package pkgService;
+
+import java.util.Vector;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import pkgModel.Appointment;
+import pkgModel.DatabaseManager;
+
+@Path("/logins")
+public class Logins {
+	private DatabaseManager db = new DatabaseManager();
+	
+	@GET
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
+	public Vector<Appointment> getUnansweredAppearanceRequests(String bandname, String username, String password) {
+		return db.getUnansweredAppearanceRequests(bandname, username, password);
+	}
+}

@@ -1,0 +1,36 @@
+package pkgModel;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class AddBandWrapper {
+	private Band band;
+	private String username;
+	
+	public AddBandWrapper() {
+	}
+
+	public AddBandWrapper(Band band, String username) {
+		super();
+		this.band = band;
+		this.username = username;
+	}
+
+	public Band getBand() {
+		return band;
+	}
+
+	public void setBand(Band band) {
+		this.band = band;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	
+}

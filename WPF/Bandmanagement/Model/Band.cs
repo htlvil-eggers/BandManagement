@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,22 +9,31 @@ namespace Bandmanagement.Model
 {
     public class Band
     {
+        [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 
+        [JsonProperty(PropertyName = "name")]
         public String Name { get; set; }
 
+        [JsonProperty(PropertyName = "leader")]
         public Musician Leader { get; set; }
 
+        [JsonProperty(PropertyName = "costsPerHour")]
         public int CostsPerHour { get; set; }
 
+        [JsonProperty(PropertyName = "musicians")]
         public List<Musician> Musicians { get; set; }
 
+        [JsonProperty(PropertyName = "appearanceRequests")]
         public List<AppearanceRequest> AppearanceRequests { get; set; }
 
+        [JsonProperty(PropertyName = "rehearsalRequests")]
         public List<RehearsalRequest> RehearsalRequests { get; set; }
 
+        [JsonProperty(PropertyName = "appointments")]
         public List<Appointment> Appointments { get; set; }
 
+        [JsonProperty(PropertyName = "musiciansWithLeader")]
         public List<Musician> MusiciansWithLeader { get
             {
                 List<Musician> retList = new List<Musician>();
