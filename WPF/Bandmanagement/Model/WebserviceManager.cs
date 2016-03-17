@@ -24,7 +24,7 @@ namespace Bandmanagement.Model
         {
             WebResponse resp = POST(Uri + "/rest/musicians", JsonConvert.SerializeObject(m));
 
-            if (((HttpWebResponse)resp).StatusCode != HttpStatusCode.OK || ((HttpWebResponse)resp).StatusCode != HttpStatusCode.Created ||
+            if (((HttpWebResponse)resp).StatusCode != HttpStatusCode.OK && ((HttpWebResponse)resp).StatusCode != HttpStatusCode.Created &&
                 ((HttpWebResponse)resp).StatusCode != HttpStatusCode.NoContent)
             {
                 return false;
@@ -38,7 +38,8 @@ namespace Bandmanagement.Model
             AddBandWrapper abWrapper = new AddBandWrapper(b, username);
             WebResponse resp = POST(Uri + "/rest/bands", JsonConvert.SerializeObject(abWrapper));            
 
-            if (((HttpWebResponse)resp).StatusCode != HttpStatusCode.OK || ((HttpWebResponse)resp).StatusCode != HttpStatusCode.Created)
+            if (((HttpWebResponse)resp).StatusCode != HttpStatusCode.OK && ((HttpWebResponse)resp).StatusCode != HttpStatusCode.Created &&
+                ((HttpWebResponse)resp).StatusCode != HttpStatusCode.NoContent)
             {
                 return false;
             }
@@ -93,7 +94,8 @@ namespace Bandmanagement.Model
             AddBandWrapper abWrapper = new AddBandWrapper(b, username);
             WebResponse resp = POST(Uri + "/rest/bands/members", JsonConvert.SerializeObject(abWrapper));
 
-            if (((HttpWebResponse)resp).StatusCode != HttpStatusCode.OK || ((HttpWebResponse)resp).StatusCode != HttpStatusCode.Created)
+            if (((HttpWebResponse)resp).StatusCode != HttpStatusCode.OK && ((HttpWebResponse)resp).StatusCode != HttpStatusCode.Created &&
+                ((HttpWebResponse)resp).StatusCode != HttpStatusCode.NoContent)
             {
                 return false;
             }
@@ -221,12 +223,12 @@ namespace Bandmanagement.Model
 
         public static void GroundAppointment(int id)
         {
-            POST(Uri + "/rest/appointments", JsonConvert.SerializeObject(id.ToString()));
+            PUT(Uri + "/rest/appointments", JsonConvert.SerializeObject(id.ToString()));
         }
 
         public static bool AllMembersOfBandAccepted(Band currentBand, Appointment appointmentToUpdate)
         {
-            String data = GET(Uri + "/rest/musicians/"+ currentBand.Name + "/" + appointmentToUpdate.Id);
+            String data = GET(Uri + "/rest/appointments/"+ currentBand.Name + "/" + appointmentToUpdate.Id);
 
             return Boolean.Parse(JsonConvert.DeserializeObject<String>(data));
         }
@@ -265,7 +267,7 @@ namespace Bandmanagement.Model
 
         public static Dictionary<String, int> AllAnswersOfAppointment(String bandname, int appId)
         {
-            String data = GET(Uri + "/rest/bands/answers" + bandname + "/" + appId);
+            String data = GET(Uri + "/rest/bands/answers/" + bandname + "/" + appId);
 
             return (Dictionary<String, int>)JsonConvert.DeserializeObject<Dictionary<String, int>>(data);
         }

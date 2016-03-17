@@ -114,11 +114,6 @@
                     </Border>
                 </Grid>
             </TabItem>
-            <TabItem Header="Auswertungen">
-                <Grid Background="#FFEAF9FF">
-                    <Label x:Name="label" Content="War nicht in diesem Meilenstein enthalten (Kilometergeld)" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top"/>
-                </Grid>
-            </TabItem>
             <TabItem Header="Datenverwaltung">
                 <Grid Background="#FFEAF9FF">
                     <Label Content="Kosten pro Stunde der Band:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>

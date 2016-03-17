@@ -21,6 +21,9 @@ namespace Bandmanagement.Model
         [JsonProperty(PropertyName = "rehearsalRequest")]
         private RehearsalRequest RehearsalRequest { get; set; }
 
+        [JsonProperty(PropertyName = "appearanceRequest")]
+        private AppearanceRequest AppearanceRequest { get; set; }
+
         public AddBandWrapper(Band b, string username)
         {
             Band = b;
@@ -37,6 +40,12 @@ namespace Bandmanagement.Model
         {
             Band = b;
             RehearsalRequest = rehearsalRequest;
+        }
+
+        public AddBandWrapper(Band b, AppearanceRequest appearanceRequest)
+        {
+            Band = b;
+            AppearanceRequest = appearanceRequest;
         }
     }
 }

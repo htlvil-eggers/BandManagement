@@ -8,6 +8,7 @@ public class AddBandWrapper {
 	private String username;
 	private Appointment appointment;
 	private RehearsalRequest rehearsalRequest;
+	private AppearanceRequest appearanceRequest;
 
 
 	public AddBandWrapper() {
@@ -31,6 +32,21 @@ public class AddBandWrapper {
         this.band = band;
         this.rehearsalRequest = rehRequest;
     }
+    
+    public AddBandWrapper(Band band, AppearanceRequest appearanceRequest)
+    {
+    	super();
+        this.band = band;
+        this.appearanceRequest = appearanceRequest;
+    }
+
+	public AppearanceRequest getAppearanceRequest() {
+		return appearanceRequest;
+	}
+
+	public void setAppearanceRequest(AppearanceRequest appearanceRequest) {
+		this.appearanceRequest = appearanceRequest;
+	}
 
 	public Appointment getAppointment() {
 		return appointment;

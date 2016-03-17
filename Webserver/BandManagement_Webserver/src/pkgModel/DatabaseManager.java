@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
@@ -122,7 +123,7 @@ public class DatabaseManager {
 				
 				retValue =  new Musician(rs.getInt(1),rs.getString(2),rs.getString(3),
 						rs.getString(4), rs.getString(5), instruments, 
-						new Location(rs.getString(8), rs.getInt(7)), rs.getDate(6), availableTimes);
+						new Location(rs.getString(8), rs.getInt(7)), rs.getTimestamp(6), availableTimes);
 			}
 			
 			conn.close();
@@ -140,7 +141,7 @@ public class DatabaseManager {
 		ResultSet rs = stmt.executeQuery();
 		
 		while(rs.next()) {
-			avTimes.add(new AvailableTime(rs.getInt(1), rs.getDate(2), rs.getDate(3)));
+			avTimes.add(new AvailableTime(rs.getInt(1), rs.getTimestamp(2), rs.getTimestamp(3)));
 		}
 		
 		return avTimes;
@@ -166,7 +167,7 @@ public class DatabaseManager {
 		         "last_name = ?, birthdate = ?, habitation_id = ?, password = ?",	ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setString(1, m.getFirstName());
 			stmt.setString(2, m.getLastName());
-			stmt.setDate(3, new java.sql.Date(m.getBirthdate().getTime()));
+			stmt.setTimestamp(3, new java.sql.Timestamp(m.getBirthdate().getTime()));
 			stmt.setInt(4, m.getHabitation().getId());
 			stmt.setString(5, m.getPassword());
 			stmt.executeUpdate();
@@ -200,7 +201,7 @@ public class DatabaseManager {
 			
 			ResultSet rs = stmt.executeQuery();		
 			while (rs.next()) {
-				rehearsalRequests.add(new RehearsalRequest(rs.getInt(1), rs.getDate(2), rs.getDate(3), rs.getDouble(4)));
+				rehearsalRequests.add(new RehearsalRequest(rs.getInt(1), rs.getTimestamp(2), rs.getTimestamp(3), rs.getDouble(4)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -217,8 +218,8 @@ public class DatabaseManager {
 			PreparedStatement stmt = conn.prepareStatement("insert into available_times values(0, ?, ?, ?, ?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, bandId);
 			stmt.setInt(2, musId);
-			stmt.setDate(3, new java.sql.Date(from.getTime()));
-			stmt.setDate(4, new java.sql.Date(to.getTime()));
+			stmt.setTimestamp(3, new java.sql.Timestamp(from.getTime()));
+			stmt.setTimestamp(4, new java.sql.Timestamp(to.getTime()));
 			stmt.executeUpdate();	
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -306,7 +307,7 @@ public class DatabaseManager {
 				
 				while (rs.next()){
 					appRequests.add(new Appointment(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4),
-							rs.getDate(5), rs.getDate(6), new Location(rs.getString(8), rs.getInt(7)), EnumAppointmentType.Appearance));
+							rs.getTimestamp(5), rs.getTimestamp(6), new Location(rs.getString(8), rs.getInt(7)), EnumAppointmentType.Appearance));
 				}
 			
 				//select only unanswered ones
@@ -345,9 +346,9 @@ public class DatabaseManager {
 			stmt.setString(4, m.getLastName());
 			if (m.getBirthdate() == null)
 			{
-				stmt.setDate(5, null);
+				stmt.setTimestamp(5, null);
 			} else {
-				stmt.setDate(5, new java.sql.Date(m.getBirthdate().getTime()));
+				stmt.setTimestamp(5, new java.sql.Timestamp(m.getBirthdate().getTime()));
 			}
 			if (m.getHabitation() == null) {
 				stmt.setNull(6, java.sql.Types.INTEGER);
@@ -356,7 +357,7 @@ public class DatabaseManager {
 			}
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}		
 	}
 
@@ -433,7 +434,7 @@ public class DatabaseManager {
 			ResultSet rs = stmt.executeQuery();
 			
 			while(rs.next()) {
-				appRequests.add(new AppearanceRequest(rs.getInt(1), rs.getString(7), rs.getString(8), rs.getDate(2), rs.getDate(3),
+				appRequests.add(new AppearanceRequest(rs.getInt(1), rs.getString(7), rs.getString(8), rs.getTimestamp(2), rs.getTimestamp(3),
 						new Location(rs.getString(5), rs.getInt(4)), rs.getInt(6)));
 			}
 		} catch (SQLException e) {
@@ -449,7 +450,7 @@ public class DatabaseManager {
 		
 		try {
 			PreparedStatement stmt = conn.prepareStatement("select m.id as mId, m.start_time as mSTime, m.end_time as mETime, l.id as lId, l.name as lName," +
-                "m.grounded mGrounded, m.name as mName, m.description as mDesc from appointments m join locations l on m.location_id = l.id where b.name = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                "m.grounded as mGrounded, m.name as mName, m.description as mDesc from bands b join appointments m on b.id = m.band_id join locations l on m.location_id = l.id where b.name = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setString(1, bandname);
 			
 			ResultSet rs = stmt.executeQuery();
@@ -457,8 +458,8 @@ public class DatabaseManager {
 			while(rs.next()) {
 				EnumAppointmentType type = this.getTypeOfAppointment(rs.getInt(1));
 				
-				appointments.add(new Appointment(rs.getInt(1), rs.getString(7), rs.getString(8), rs.getInt(6), rs.getDate(2),
-						rs.getDate(3), new Location(rs.getString(5), rs.getInt(4)), type));
+				appointments.add(new Appointment(rs.getInt(1), rs.getString(7), rs.getString(8), rs.getInt(6), rs.getTimestamp(2),
+						rs.getTimestamp(3), new Location(rs.getString(5), rs.getInt(4)), type));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -494,7 +495,7 @@ public class DatabaseManager {
 			PreparedStatement stmt = conn.prepareStatement("insert into bandmembers values(?, ?, ?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, band.getId());
 			stmt.setInt(2, this.getMusicianIdFromName(username));
-			stmt.setDate(3, new java.sql.Date(new Date().getTime()));
+			stmt.setTimestamp(3, new java.sql.Timestamp(new Date().getTime()));
 			
 			stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -505,7 +506,13 @@ public class DatabaseManager {
 
 	public void deleteMember(Band band, String username) {
 		try {
-			PreparedStatement stmt = conn.prepareStatement("delete from bandmembers where band_id = ? and musician_id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			PreparedStatement stmt = conn.prepareStatement("delete from available_times where band_id = ? and musician_id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			stmt.setInt(1, band.getId());
+			stmt.setInt(2, this.getMusicianIdFromName(username));
+			
+			stmt.executeUpdate();
+			
+			stmt = conn.prepareStatement("delete from bandmembers where band_id = ? and musician_id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, band.getId());
 			stmt.setInt(2, this.getMusicianIdFromName(username));
 			
@@ -534,8 +541,8 @@ public class DatabaseManager {
 			stmt.setInt(1, band.getId());
 			stmt.setInt(2, appointment.getLocation().getId());
 			stmt.setInt(3, appointment.getGrounded());
-			stmt.setDate(4, new java.sql.Date(appointment.getStartTime().getTime()));
-			stmt.setDate(5, new java.sql.Date(appointment.getEndTime().getTime()));
+			stmt.setTimestamp(4, new java.sql.Timestamp(appointment.getStartTime().getTime()));
+			stmt.setTimestamp(5, new java.sql.Timestamp(appointment.getEndTime().getTime()));
 			stmt.setString(6, appointment.getName());
 			stmt.setString(7, appointment.getDescription());
 			
@@ -552,8 +559,8 @@ public class DatabaseManager {
 		try {
 			PreparedStatement stmt = conn.prepareStatement("select id  from appointments where band_id = ? and start_time = ? and end_time = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, b.getId());
-			stmt.setDate(2, new java.sql.Date(appointment.getStartTime().getTime()));
-			stmt.setDate(3, new java.sql.Date(appointment.getEndTime().getTime()));
+			stmt.setTimestamp(2, new java.sql.Timestamp(appointment.getStartTime().getTime()));
+			stmt.setTimestamp(3, new java.sql.Timestamp(appointment.getEndTime().getTime()));
 			
 			ResultSet rs = stmt.executeQuery();
 			
@@ -598,12 +605,16 @@ public class DatabaseManager {
 		boolean ret = true;
 		HashMap<String, Integer> answers = this.getAllAnswersForAppointment(bandname, appId); 
 		
-		for (int accepted : answers.values()) {
-			if (accepted != 1) {
-				ret = false;
+		if (answers.size() < this.getMusiciansOfBand(bandname).length) {
+			ret = false;
+		}
+		else {
+			for (int accepted : answers.values()) {
+				if (accepted != 1) {
+					ret = false;
+				}
 			}
 		}
-		
 		return ret;
 	}
 
@@ -611,15 +622,15 @@ public class DatabaseManager {
 		HashMap<String, Integer> answers = new HashMap<String, Integer>();
 		
 		try {
-			PreparedStatement stmt = conn.prepareStatement("select m.username as mUsername, a.accepted as aAccepted from band b join appointment_attendances a on b.id = a.band_id join musicians m on a.musician_id = m.id " + 
-                                                  "where b.bandname = ? and a.appointment_id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			PreparedStatement stmt = conn.prepareStatement("select m.username as mUsername, a.accepted as aAccepted from bands b join appointment_attendances a on b.id = a.band_id join musicians m on a.musician_id = m.id " + 
+                                                  "where b.name = ? and a.appointment_id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setString(1, bandname);
-			stmt.setInt(1, appId);
+			stmt.setInt(2, appId);
 			
 			ResultSet rs = stmt.executeQuery();
 			
 			while(rs.next()) {
-				answers.put(rs.getString(1), rs.getInt(1));
+				answers.put(rs.getString(1), rs.getInt(2));
 			}
 			
 		} catch (SQLException e) {
@@ -640,6 +651,12 @@ public class DatabaseManager {
 				
 				stmt.executeUpdate();
 			}
+			else {
+				stmt = conn.prepareStatement("delete from appearances where appointment_id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+				stmt.setInt(1, app.getId());
+				
+				stmt.executeUpdate();
+			}
 			
 			stmt = conn.prepareStatement("delete from appointments where id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, app.getId());
@@ -655,8 +672,8 @@ public class DatabaseManager {
 		try {
 			PreparedStatement stmt = conn.prepareStatement("insert into rehearsal_requests values (0, ?, ?, ?, ?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, band.getId());
-			stmt.setDate(2, new java.sql.Date(rehearsalRequest.getStartTime().getTime()));
-			stmt.setDate(3, new java.sql.Date(rehearsalRequest.getEndTime().getTime()));
+			stmt.setTimestamp(2, new java.sql.Timestamp(rehearsalRequest.getStartTime().getTime()));
+			stmt.setTimestamp(3, new java.sql.Timestamp(rehearsalRequest.getEndTime().getTime()));
 			stmt.setDouble(4, rehearsalRequest.getDuration());
 			
 			stmt.executeUpdate();
@@ -672,8 +689,8 @@ public class DatabaseManager {
 		try {
 			PreparedStatement stmt = conn.prepareStatement("select id  from rehearsal_requests where band_id = ? and start_time = ? and end_time = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, band.getId());
-			stmt.setDate(2, new java.sql.Date(rehearsalRequest.getStartTime().getTime()));
-			stmt.setDate(3, new java.sql.Date(rehearsalRequest.getEndTime().getTime()));
+			stmt.setTimestamp(2, new java.sql.Timestamp(rehearsalRequest.getStartTime().getTime()));
+			stmt.setTimestamp(3, new java.sql.Timestamp(rehearsalRequest.getEndTime().getTime()));
 			
 			ResultSet rs = stmt.executeQuery();
 			
@@ -703,6 +720,10 @@ public class DatabaseManager {
 
 	public Band allAvailableTimes(Band band) {
 		Band ret = band;
+		band.getLeader().setAvailableTimes(new Vector<AvailableTime>());
+		for (Musician m : band.getMusicians()) {
+			m.setAvailableTimes(new Vector<AvailableTime>());
+		}
 		
 		try {
 			PreparedStatement stmt = conn.prepareStatement("select id, musician_id, start_time, end_time from available_times where band_id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -711,18 +732,16 @@ public class DatabaseManager {
 			ResultSet rs = stmt.executeQuery();
 			
 			while(rs.next()) {
-				if (band.getLeader().getId() == rs.getInt(2)) {
-					band.getLeader().addAvailableTime(new AvailableTime(rs.getInt(1), 
-							rs.getDate(3), rs.getDate(4)));
-				}
-				else {
 					for (Musician m : band.getMusicians()) {
 						if (m.getId() == rs.getInt(2)) {
 							m.addAvailableTime(new AvailableTime(rs.getInt(1), 
-								rs.getDate(3), rs.getDate(4)));
+								rs.getTimestamp(3), rs.getTimestamp(4)));
 						}
 					}
-				}
+				if(band.getLeader().getId() == rs.getInt(2)) {
+					band.getLeader().addAvailableTime(new AvailableTime(rs.getInt(1), 
+							rs.getTimestamp(3), rs.getTimestamp(4)));
+				}				
 			}
 			
 		} catch (SQLException e) {
@@ -924,6 +943,47 @@ public class DatabaseManager {
 		try {
 			PreparedStatement stmt = conn.prepareStatement("delete from streets where id = ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			stmt.setInt(1, id);
+			
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+
+	public Band[] getBands() {
+		ResultSet rs = this.getData("select id, name from bands");
+		Vector<Band> bands = new Vector<Band>();
+		
+		try {
+			while (rs.next()) {
+				Band b = new Band();
+				b.setId(rs.getInt(1));
+				b.setName(rs.getString(2));
+				
+				bands.add(b);
+			}
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return bands.toArray(new Band[bands.size()]);
+		
+	}
+
+	public void addAppearanceRequest(Band band, AppearanceRequest appearanceRequest) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement("insert into appearance_requests values (0, ?, ?, ?, ?, ?, ?, ?)", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+			stmt.setInt(1, band.getId());
+			stmt.setTimestamp(2, new java.sql.Timestamp(appearanceRequest.getStartTime().getTime()));
+			stmt.setTimestamp(3, new java.sql.Timestamp(appearanceRequest.getEndTime().getTime()));
+			stmt.setInt(4, appearanceRequest.getLocation().getId());
+			stmt.setInt(5, appearanceRequest.getAccepted());
+			stmt.setString(6, appearanceRequest.getName());
+			stmt.setString(7, appearanceRequest.getDescription());
 			
 			stmt.executeUpdate();
 		} catch (SQLException e) {

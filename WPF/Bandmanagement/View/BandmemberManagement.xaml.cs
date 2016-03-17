@@ -80,6 +80,10 @@ namespace Bandmanagement.View
             {
                 this.printError("Alle Felder müssen ausgefüllt werden!");
             }
+
+            this.currentBand.Musicians = WebserviceManager.GetMusiciansOfBand(currentBand.Name);
+            this.dgCurrentBandmembers.ItemsSource = this.currentBand.Musicians;
+            this.Window_Loaded(this, null);
         }
 
         private void printError(String message)
@@ -90,10 +94,12 @@ namespace Bandmanagement.View
         private void btnRemoveBandmember_Click(object sender, RoutedEventArgs e)
         {
             Musician selectedMusician = (Musician)this.dgCurrentBandmembers.SelectedItem;
-            this.currentBand.Musicians.Remove(selectedMusician);
-            this.dgCurrentBandmembers.Items.Refresh();
-
             WebserviceManager.RemoveMusicianFromBand(currentBand, selectedMusician.Username);
+
+            this.currentBand.Musicians.Remove(selectedMusician);
+            this.dgCurrentBandmembers.ItemsSource = this.currentBand.Musicians;
+            this.Window_Loaded(this, null);
+            this.dgCurrentBandmembers.Items.Refresh();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -112,8 +118,11 @@ namespace Bandmanagement.View
 
             this.tbBandCostsPerHour.Text = this.currentBand.CostsPerHour.ToString();
 
-            this.cbLocations.ItemsSource = WebserviceManager.GetLocations();
-            this.cbLocationsFixRehearsal.ItemsSource = this.cbLocations.ItemsSource;
+            if (e != null)
+            {
+                this.cbLocations.ItemsSource = WebserviceManager.GetLocations();
+                this.cbLocationsFixRehearsal.ItemsSource = this.cbLocations.ItemsSource;
+            }
         }
 
         private void btnAcceptAppearanceRequest_Click(object sender, RoutedEventArgs e)
@@ -207,9 +216,9 @@ namespace Bandmanagement.View
             RehearsalRequest requestToUpdate = (RehearsalRequest)this.dgRehearsalRequests.SelectedItem;
             //remove from app requests
             WebserviceManager.RemoveRehearsalRequest(requestToUpdate.Id);
- 
-            this.currentBand.RehearsalRequests.Remove(requestToUpdate);
-            this.dgRehearsalRequests.Items.Refresh();
+            this.currentBand.RehearsalRequests.Remove(currentBand.RehearsalRequests.FirstOrDefault(r => r.Id == requestToUpdate.Id));
+            this.dgRehearsalRequests.ItemsSource = this.currentBand.RehearsalRequests;
+            this.Window_Loaded(this, null);
         }
 
         private void dgRehearsalRequests_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -344,16 +353,8 @@ namespace Bandmanagement.View
                 WebserviceManager.AddAppearance(currentBand, newAppointment);
 
                 this.currentBand.Appointments.Add(newAppointment);
-
-                //remove 
-                //OleDbCommand cmdDeleteRequest = dbOra.getMyOleDbConnection().CreateCommand();
-                //cmdDeleteRequest.CommandText = "delete from rehearsal_requests where id = ?";
-                //cmdDeleteRequest.Parameters.AddWithValue("rehReqId", rehReq.Id);
-                //cmdDeleteRequest.ExecuteNonQuery();
-
-               // this.currentBand.RehearsalRequests.Remove(rehReq);
-
-                this.dgAppointments.Items.Refresh();
+                this.dgAppointments.ItemsSource = currentBand.Appointments;
+                this.Window_Loaded(this, null);
                 this.dgRehearsalRequests.Items.Refresh();
             }
             else
@@ -368,7 +369,7 @@ namespace Bandmanagement.View
 
             if (selAppointment != null)
             {
-                this.lvMusicianAnswers.ItemsSource =WebserviceManager.AllAnswersOfAppointment(currentBand.Name, selAppointment.Id);
+                this.lvMusicianAnswers.ItemsSource = WebserviceManager.AllAnswersOfAppointment(currentBand.Name, selAppointment.Id);
             }
             else
             {

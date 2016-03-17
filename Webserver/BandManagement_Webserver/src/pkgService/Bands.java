@@ -35,6 +35,12 @@ public class Bands {
  		db.updateBand(band);
  	}
     
+    @GET
+ 	@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,MediaType.TEXT_XML})
+ 	public Band[] getBands() {
+ 		return db.getBands();
+ 	}
+    
     @POST
     @Path("members")
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
@@ -49,6 +55,13 @@ public class Bands {
 		db.addAppointment(abWrapper.getBand(), abWrapper.getAppointment());
 		
 		return db.getIdFromAppointment(abWrapper.getBand(), abWrapper.getAppointment());
+	}
+    
+    @POST
+    @Path("appearanceRequests")
+	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
+	public void addAppearanceRequest (AddBandWrapper abWrapper) {
+		db.addAppearanceRequest(abWrapper.getBand(), abWrapper.getAppearanceRequest());
 	}
     
     @POST
@@ -109,7 +122,7 @@ public class Bands {
     @Path("answers/{bandname}/{appId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML})
     public HashMap<String, Integer> getAnswersForAppointment(@PathParam("bandname") String bandname,
-    		@PathParam("username") String appId) {
+    		@PathParam("appId") String appId) {
     	HashMap<String, Integer> answers = db.getAllAnswersForAppointment(bandname, Integer.parseInt(appId));
     
     	return answers;

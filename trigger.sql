@@ -1,16 +1,11 @@
 CREATE OR REPLACE TRIGGER BANDS_BEFOREINSERT 
-BEFORE INSERT OR UPDATE ON BANDS 
+BEFORE INSERT ON BANDS 
 FOR EACH ROW 
 DECLARE
   maxId integer;  
 BEGIN
-  if :old.id <> null then
-    :new.id := :old.id; 
-    
-  else 
-    select nvl (max(id), -1) into maxId from bands;      
-    :new.id := maxId + 1;   
-  end if;
+   select nvl (max(id), -1) into maxId from bands;      
+  :new.id := maxId + 1;   
 END;
 
 
@@ -32,7 +27,7 @@ END;
 
 
 CREATE OR REPLACE TRIGGER STREETS_BEFOREINSERT 
-BEFORE INSERT OR UPDATE ON STREETS 
+BEFORE INSERT ON STREETS 
 FOR EACH ROW 
 DECLARE
   maxId integer;  

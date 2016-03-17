@@ -8,7 +8,9 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
- 
+import java.text.DateFormat;
+import java.util.Date;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -34,6 +36,8 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>,
   private Gson getGson() {
     if (gson == null) {
       final GsonBuilder gsonBuilder = new GsonBuilder();
+      gsonBuilder.registerTypeAdapter(Date.class, new GsonUTCdateAdapter());
+      gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       gson = gsonBuilder.create();
     }
     return gson;
