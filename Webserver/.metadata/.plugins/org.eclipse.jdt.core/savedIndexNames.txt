@@ -15,7 +15,6 @@ INDEX VERSION 1.127+C:\Users\Michael\Documents\GitHub\BandManagement\Webserver\.
 900480025.index
 1015721371.index
 1773958954.index
-1357515057.index
 1482361719.index
 1090200666.index
 3077148506.index
