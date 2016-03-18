@@ -17,10 +17,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/services/javax.ws.rs.ext.MessageBodyWriter'
+        exclude 'META-INF/jersey-module-version'
+        exclude 'META-INF/services/javax.ws.rs.ext.MessageBodyReader'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/services/com.sun.jersey.spi.container.ResourceMethodCustomInvokerDispatchProvider'
+        exclude 'META-INF/services/com.sun.jersey.spi.container.ResourceMethodDispatchProvider'
+        exclude 'META-INF/services/com.sun.jersey.spi.inject.InjectableProvider'
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:support-v4:23.2.0'
+    compile files('lib/jackson-core-asl-1.9.2.jar')
+    compile files('lib/jackson-jaxrs-1.9.2.jar')
+    compile files('lib/jackson-mapper-asl-1.9.2.jar')
+    compile files('lib/jackson-xc-1.9.2.jar')
+    compile files('lib/jersey-client-1.19.jar')
+    compile files('lib/jersey-core-1.19.jar')
+    compile files('lib/jersey-json-1.19.jar')
+    compile files('lib/jersey-multipart-1.19.jar')
+    compile files('lib/jersey-server-1.19.jar')
+    compile files('lib/jersey-servlet-1.19.jar')
+    compile files('lib/jettison-1.1.jar')
+    compile files('lib/jsr311-api-1.1.1.jar')
+    compile files('lib/mimepull-1.9.6.jar')
+    compile files('lib/gson-2.6.2.jar')
 }

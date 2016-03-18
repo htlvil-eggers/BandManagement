@@ -2,10 +2,33 @@
     <string name="app_name">Android_Client</string>
 
 
-    <string name="username">Username</string>
+    <string name="username">Usernam</string>
     <string name="password">Password</string>
     <string name="bandName">Band Name</string>
     <string name="login">Login</string>
 
     <string name="credentialsNotCorrect">Sorry but the credentials are not correct!</string>
+
+
+    <string name="firstName">First Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="birthdate">Birthdate</string>
+    <string name="habitation">Habitation</string>
+    <string name="instruments">Instruments</string>
+    <string name="save">Save</string>
+    <string name="personalDataUpdated">Personal Data Updated!</string>
+
+
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="nothingSelected">Nothing Selected!</string>
+    <string name="title">Title</string>
+    <string name="location">Location</string>
+    <string name="description">Description</string>
+
+
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="addAvailableTime">Add Available Time</string>
+    <string name="availableTimeAdded">Available time was added!</string>
 </resources>
