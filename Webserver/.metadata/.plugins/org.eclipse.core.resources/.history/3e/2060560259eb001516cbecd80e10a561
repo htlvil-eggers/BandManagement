@@ -1,8 +1,0 @@
-package pkgService;
-
-import javax.ws.rs.Path;
-
-@Path("/streets")
-public class Streets {
-
-}

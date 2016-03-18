@@ -1,8 +1,0 @@
-package pkgService;
-
-import javax.ws.rs.Path;
-
-@Path("/appointments")
-public class Appointments {
-
-}

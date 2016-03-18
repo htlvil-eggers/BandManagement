@@ -1,6 +1,0 @@
-package pkgModel;
-
-public class AddBandWrapper {
-	private Band band;
-	private String username;
-}
