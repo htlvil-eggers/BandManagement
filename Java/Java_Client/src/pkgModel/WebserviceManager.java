@@ -42,7 +42,7 @@ public class WebserviceManager {
 	}
 	
     private static URI getBaseURI() {
-	    return UriBuilder.fromUri("http://localhost:8081/BandManagement_Webserver").build();
+	    return UriBuilder.fromUri("http://localhost:8080/BandManagement_Webserver").build();
     }
 
 	public static Location[] getLocations() {

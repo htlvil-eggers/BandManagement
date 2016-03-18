@@ -94,4 +94,8 @@ public class Appointment {
 	public void setType(EnumAppointmentType type) {
 		this.type = type;
 	}
+	
+	public String toString() {
+		return name;
+	}
 }
