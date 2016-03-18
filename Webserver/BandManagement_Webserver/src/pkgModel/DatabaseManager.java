@@ -15,8 +15,8 @@ import pkgService.AppearanceRequests;
 
 
 public class DatabaseManager {
-	static final String DB_URL = "jdbc:oracle:thin:@192.168.128.151:1521:ora11g"; //intern
-   // static final String DB_URL = "jdbc:oracle:thin:@212.152.179.117:1521:ora11g"; //extern
+	//static final String DB_URL = "jdbc:oracle:thin:@192.168.128.151:1521:ora11g"; //intern
+    static final String DB_URL = "jdbc:oracle:thin:@212.152.179.117:1521:ora11g"; //extern
 	private String USER = "d5bhifs25";
 	private String PASS = "edelBlech";
     private Connection conn = null;
