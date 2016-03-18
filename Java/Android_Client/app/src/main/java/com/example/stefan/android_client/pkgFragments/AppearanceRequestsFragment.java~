@@ -1,0 +1,245 @@
+package com.example.stefan.android_client.pkgFragments;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.stefan.android_client.R;
+import com.example.stefan.android_client.pkgModel.Appointment;
+import com.example.stefan.android_client.pkgModel.EnumAppointmentType;
+import com.example.stefan.android_client.pkgModel.Location;
+import com.example.stefan.android_client.pkgModel.WebserviceManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Vector;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link AppearanceRequestsFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link AppearanceRequestsFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class AppearanceRequestsFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_USERNAME = "username";
+    private static final String ARG_PASSWORD = "password";
+    private static final String ARG_BAND_NAME = "bandName";
+
+    // TODO: Rename and change types of parameters
+    private String username;
+    private String password;
+    private String bandName;
+
+    private Spinner spnAppearances;
+    private TextView txtAppearanceDetail;
+    private Button btnAcceptAppearance;
+    private Button btnDeclineAppearance;
+
+    private OnFragmentInteractionListener mListener;
+
+    public AppearanceRequestsFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment AppearanceRequestsFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static AppearanceRequestsFragment newInstance(String username, String password, String bandName) {
+        AppearanceRequestsFragment fragment = new AppearanceRequestsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_USERNAME, username);
+        args.putString(ARG_PASSWORD, password);
+        args.putString(ARG_BAND_NAME, bandName);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_appearance_requests, container, false);
+
+        setComponentReferences(view);
+        initializeComponents();
+        setEventHandlers();
+
+        return view;
+    }
+
+    private void setEventHandlers() {
+        btnAcceptAppearance.setOnClickListener(this);
+        btnDeclineAppearance.setOnClickListener(this);
+        spnAppearances.setOnItemSelectedListener(this);
+    }
+
+    private void initializeComponents() {
+        initializeSpnAppearances();
+    }
+
+    private void initializeSpnAppearances() {
+        final Context context = this.getContext();
+
+        new AsyncTask<String,Void,Appointment[]>() {
+            @Override
+            protected Appointment[] doInBackground(String... credentials) {
+                return WebserviceManager.getUnansweredAppearanceRequests(credentials[0], credentials[2], credentials[1]);
+            }
+
+            protected void onPostExecute(Appointment[] appearances)
+            {
+                ArrayAdapter<Appointment> adapter = new ArrayAdapter<Appointment> (context, android.R.layout.simple_spinner_dropdown_item, appearances);
+
+                spnAppearances.setAdapter(adapter);
+            }
+        }.execute(username, bandName, password);
+    }
+
+    private void setComponentReferences(View view) {
+        spnAppearances = (Spinner) view.findViewById(R.id.spnAppearance);
+        txtAppearanceDetail = (TextView) view.findViewById(R.id.txtAppearanceDetail);
+        btnAcceptAppearance = (Button) view.findViewById(R.id.btnAcceptAppearance);
+        btnDeclineAppearance = (Button) view.findViewById(R.id.btnDeclineAppearance);
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+
+            Intent intent = ((AppCompatActivity) context).getIntent();
+
+            username = intent.getStringExtra("username");
+            password = intent.getStringExtra("password");
+            bandName = intent.getStringExtra("bandName");
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        Appointment selectedAppearance;
+
+        switch(v.getId()) {
+            case R.id.btnAcceptAppearance:
+                selectedAppearance = (Appointment) spnAppearances.getSelectedItem();
+
+                if (selectedAppearance != null) {
+                    WebserviceManager.answerAppearanceRequest(selectedAppearance, bandName, username, password, true);
+                    ((ArrayAdapter<Appointment>) spnAppearances.getAdapter()).remove(selectedAppearance);
+                }
+                else {
+                    Toast.makeText(this.getContext(), R.string.nothingSelected, Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+
+            case R.id.btnDeclineAppearance:
+                selectedAppearance = (Appointment) spnAppearances.getSelectedItem();
+
+                if (selectedAppearance != null) {
+                    WebserviceManager.answerAppearanceRequest(selectedAppearance, bandName, username, password, false);
+                    ((ArrayAdapter<Appointment>) spnAppearances.getAdapter()).remove((Appointment) spnAppearances.getSelectedItem());
+                }
+                else {
+                    Toast.makeText(this.getContext(), R.string.nothingSelected, Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (parent.getId()) {
+            case R.id.spnAppearance:
+                Appointment selectedAppearance = (Appointment) spnAppearances.getSelectedItem();
+
+                String newLine = System.getProperty("line.separator");
+                SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+                String text = "";
+
+                text += getResources().getString(R.string.title) + ": " + selectedAppearance.getName() + newLine + newLine;
+                text += getResources().getString(R.string.from) + ": " + formatter.format(selectedAppearance.getStartTime()) + newLine;
+                text += getResources().getString(R.string.to) + ": " + formatter.format(selectedAppearance.getEndTime()) + newLine + newLine;
+                text += getResources().getString(R.string.location) + ": " + selectedAppearance.getLocation().getName() + newLine + newLine;
+                text += getResources().getString(R.string.description) + ": " + selectedAppearance.getDescription();
+
+                txtAppearanceDetail.setText(text);
+
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        switch (parent.getId()) {
+            case R.id.spnAppearance:
+                String text = getResources().getString(R.string.nothingSelected);
+
+                txtAppearanceDetail.setText(text);
+
+                break;
+        }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+}
