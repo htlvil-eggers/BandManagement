@@ -1,3 +1,5 @@
+var url = "http://localhost:8081/BandManagement_Webserver/rest/";
+
 function SendForm() {
     var name = $("#name").val();
     var descr = $("#description").val();
@@ -19,7 +21,7 @@ function SendForm() {
     reqWrapper.appearanceRequest.location = new Object();
     reqWrapper.appearanceRequest.location.id = location;
 
-    var query = "http://localhost:8081/BandManagement_Webserver/rest/bands/appearanceRequests";
+    var query = url + "bands/appearanceRequests";
     var request = $.ajax({
         method: "POST",
         type: "POST",
@@ -37,7 +39,7 @@ function SendForm() {
 
 
 jQuery(window).load(function () {
-    var query = "http://localhost:8081/BandManagement_Webserver/rest/locations";
+    var query = url + "locations";
     var request = $.ajax({
         method: "GET",
         type: "GET",
@@ -49,7 +51,7 @@ jQuery(window).load(function () {
         });
     });
 
-    var query = "http://localhost:8081/BandManagement_Webserver/rest/bands";
+    var query = url + "bands";
     var request = $.ajax({
         method: "GET",
         type: "GET",
